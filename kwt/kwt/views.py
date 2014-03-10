@@ -14,10 +14,10 @@ import unittest
 
 
 def tld_flag(k, tld_all, namecheap_domains, uid):
-        for t in tld_all:
-            url = k+'.'+t
-            b = namecheap_domains.get(url)
-            yield t, b, uid.next()
+    for t in tld_all:
+        url = k + '.' + t
+        b = namecheap_domains.get(url)
+        yield t, b, uid.next()
 
 
 @csrf_exempt
@@ -25,13 +25,11 @@ def home(request):
     user = request.user
     domains = []
     form = KeywordForm()
-    #~ KeywordFormSet = formset_factory(KeywordForm, max_num=4, extra=2)
-
     if form.is_valid():
         kw_english = form.cleaned_data['kw_english']
         sv_english = form.cleaned_data['sv_english']
         form.save()
-    if request.GET.get('sort') == "id" or not request.GET.has_key('sort'):
+    if request.GET.get('sort') == "id" or not 'sort' in request.GET:
         kwords_all = Keyword.objects.all()
     if request.GET.get('sort') == "alphabetic":
         kwords_all = Keyword.objects.order_by('kw_english')
@@ -40,7 +38,7 @@ def home(request):
     return render_to_response(
         'st.html',
         dict(static_url=settings.STATIC_URL, media=settings.MEDIA_ROOT,
-             form=form,#, form_kwl=form_kwl,
+             form=form,
              kwords_all=kwords_all, context_instance=RequestContext(request)))
 
 
