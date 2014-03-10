@@ -1,0 +1,4 @@
+*.pyc
+*.db
+*.odt
+local_settings.py

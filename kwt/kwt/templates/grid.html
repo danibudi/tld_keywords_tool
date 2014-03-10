@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<?xml version="1.0" encoding="utf-8"?>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<html xmlns="http://www.w3.org/1999/xhtml">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script><head>
+
+
+<style>
+.right
+{
+position:absolute;
+right:50px;
+_width:300px;
+background-color:#b0e0e6;
+}
+</style>
+
+    <title>
+        Keywords
+    </title>
+</head>
+
+<body style="background-image:url('/static/bground-pattern.jpg') ">
+<script>
+function msg()
+{
+    var text = "";
+    {% for k,s,t in grid %}
+        {% for tld, b, nn in t %}
+            {% if b %}
+            var e = document.getElementById("id_agree_{{nn}}");
+            if (e.checked) {
+                text = text + "{{k}}.{{tld}} ";
+            }
+            {%endif%}
+        {%endfor%}
+    {%endfor%}
+    var ta = document.getElementById("to_cb");
+    ta.value = text;
+    ta.focus();
+    ta.select();
+}
+
+function clr()
+{
+    var text = "";
+    {% for k,s,t in grid %}
+        {% for tld, b, nn in t %}
+            {% if b %}
+            var e = document.getElementById("id_agree_{{nn}}");
+            if (e.checked) {
+                e.checked = false;
+            }
+            {%endif%}
+        {%endfor%}
+    {%endfor%}
+    var ta = document.getElementById("to_cb");
+    ta.value = "";
+}
+</script>
+<div id="content" style='_width:60%'>
+<h1>
+Available domains
+</h1>
+    <form name="form_lang" action="" method="post">{% csrf_token %}
+    {{ form_lang.management_form }}
+    {{ form_lang.as_ul }}
+    <input type="submit" value="Show available Domains" />
+    </form>
+    <br clear=' left'/>
+    <br/>
+    <table>
+    {% for k,s,t in grid %}
+        <tr><th style="text-align:left;font-size:12px;">{{ k }}</th>
+        <th  style="text-align:right;font-size:12px;">{{ s }} </span></th>
+        {% for tld, b, nn in t %}
+            <td>
+            {% if b %}
+                <input id="id_agree_{{nn}}" type="checkbox" name="agree" checked></input>
+                <label id="terms" class="vCheckboxLabel" for="id_agree" style="font-size:12px; display: inline-table;padding-top:4px;margin: 0px; margin-right: 8px;" >
+                    {{ tld }}
+                </label>
+            {% else %}
+                {% if b == None %} <span style="color:red;font-size:12px;">na</span>{% endif %}
+                <label id="terms" class="vCheckboxLabel" for="id_agree_{{nn}}" style="color:gray; font-size:12px; display: inline-table;padding-top:4px;
+                {% if b == None %}margin-left: 0px;{% else %}margin-left: 26px;{% endif %} margin-right: 8px;" >
+                    {{ tld }}
+                </label>
+            {% endif %}
+            </td>
+        {% endfor %}
+        </tr>
+    {% endfor %}
+    </table>
+    <input type="button" value="Copy to clipboard" onclick="msg()" />
+    <textarea id="to_cb" style="width: 30em;">
+    </textarea>
+    <input type="button" value="Clear selection" onclick="clr()" />
+</div>
