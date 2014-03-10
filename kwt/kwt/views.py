@@ -5,7 +5,6 @@ from django.template.context import Context, RequestContext
 from django.contrib.auth.models import Group, User
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-import settings
 from models import Keyword, Tld, Language, Kw_sv_language
 from forms import KeywordForm, KeywordListForm, KeywordTldForm, LanguageForm
 from django.forms.formsets import formset_factory
@@ -37,7 +36,7 @@ def home(request):
         kwords_all = Keyword.objects.order_by('sv_english')
     return render_to_response(
         'st.html',
-        dict(static_url=settings.STATIC_URL, media=settings.MEDIA_ROOT,
+        dict(
              form=form,
              kwords_all=kwords_all, context_instance=RequestContext(request)))
 
