@@ -70,7 +70,6 @@ class="box-menu highlight">
             <th><a style="color: #666666; font-weight:bold; font-size:13px; margin-left:0px;">SV</a></th>
         </tr>
         </thead>
-
         <tbody>
             {% for kw in kw_language %}
             <tr>
@@ -87,40 +86,30 @@ class="box-menu highlight">
 </div>
 
 <div id="kwords">
-<fieldset style='width:45%;'>
-<form name="kwform" action="" id="add_kw_sv" enctype="multipart/form-data" method="post" accept-charset="utf-8">{% csrf_token %}
-    {{ form.management_form }}
-    {% if form.errors %}
-    <p class="quiet red">Please fix highlighted field(s)</p>
-    {% endif %}
-    <div class="box500">
-
-    {% for field in form %}
+<fieldset style='width:60%;'  method="post" accept-charset="utf-8">{% csrf_token %}
+    {% for field in formset %}
         {% if field.errors %}
             <div class="fieldWrapper" style="float:left;width:95%;margin:0 0 16px 0;">
-                <p style='margin-left:18px; float: left; font-weight: bold;width: 500px;'>{{ field.label_tag }}
+                <p style='margin-left:10px; float: left; font-weight: bold; width:900px;'>{{ field.label_tag }}
                 <a style='vertical-align:top!important;background-color:#ff9393;float:right;margin:0 0 0 5px;'>
                 {{ field }}</a>
                 </p>
         {% else %}
-            <div class="fieldWrapper" style='margin-left:1.5em!important; ' >
-                <p style='vertical-align:top!important;font-weight: bold;width: 500px;'>{{ field.label_tag }}
-                <a style='float:right;width: 250px'>{{ field }}</a></p>
+            <div class="fieldWrapper" style='margin-left:1.1em!important; ' >
+                <p style='vertical-align:top!important;font-weight: bold;width: 900px;'>{{ field.label_tag }}
+                <a style='_float:right;width: 250px'>{{ field }}</a></p>
         {% endif %}
             </div>
-         <br clear=' left'/>
     {% endfor %}
     </div>
     <div  style='text-align:center; _margin-top:12em'>
-        <input class="ContactSubButton"  type="submit" name="nc_sub" value="SUBMIT"/></div>
-    <br/>
-    <br/>
-   </div>
-</form>
+    <input class="ContactSubButton"  type="submit" name="nc_sub" value="Add"/>
+    <input class="ContactSubButton"  type="submit" name="nc_clr" value="Clear"/>
+    </div>
 </fieldset>
+
+<br/>
 </div>
-
-
 </div>
 </body>
 </html>

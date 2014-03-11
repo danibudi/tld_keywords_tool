@@ -13,6 +13,7 @@ import unittest
 from settings import LANGUAGES
 
 
+
 def tld_flag(k, tld_all, namecheap_domains, uid):
     for t in tld_all:
         url = k + '.' + t
@@ -26,7 +27,7 @@ def home(request):
     language = None
     kwords_all = Keyword.objects.all()
     form_lang = LanguagesAllForm(request.POST, prefix='pfix')
-    if request.method == 'POST':
+    if request.method == 'POST'  and 'lang_sub' in request.POST:
         if form_lang.is_valid():
             try:
                 language = form_lang.cleaned_data['language']
@@ -37,6 +38,14 @@ def home(request):
             except:
                 language = ''
     form = KeywordForm()
+    KeywordFormSet = formset_factory(KeywordForm, extra=4)
+    formset = KeywordFormSet()
+    print 43, formset.is_valid(), 44, formset.errors
+    if request.method == 'POST'  and 'nc_sub' in request.POST:
+        if formset.is_valid():
+            print 46, 'valid'
+        else:
+            print 47, 'no valid', formset.errors
     if form.is_valid():
         kw_english = form.cleaned_data['kw_english']
         sv_english = form.cleaned_data['sv_english']
@@ -49,7 +58,7 @@ def home(request):
         kwords_all = Keyword.objects.order_by('sv_english')
     return render_to_response(
         'st.html',
-        dict(
+        dict(formset=formset,
              form=form, form_lang=form_lang, kw_language=kw_language, language=language,
              kwords_all=kwords_all, context_instance=RequestContext(request)))
 
