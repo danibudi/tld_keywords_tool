@@ -58,8 +58,8 @@ class="box-menu highlight">
 <form name="form_lang" action="" method="post">{% csrf_token %}
     {{ form_lang.management_form }}
     {{ form_lang.as_table }}
-    <input type="submit" value="Show keywords" />
-    </form>
+    <input type="submit" name="lang_sub" value="Show keywords" />
+</form>
 
 <div style="max-height:40em; overflow:auto;background-color: #b0e0e6; width:30em; box-shadow: 0px 0px 0.5em #97CBF4;vertical-align:top!important;"
 class="box-menu highlight">
