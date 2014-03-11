@@ -22,8 +22,6 @@ def tld_flag(k, tld_all, namecheap_domains, uid):
 
 @csrf_exempt
 def home(request):
-    domains = []
-    form = KeywordForm()
     kw_language = None
     language = None
     kwords_all = Keyword.objects.all()
@@ -38,6 +36,7 @@ def home(request):
                     kw_language = None
             except:
                 language = ''
+    form = KeywordForm()
     if form.is_valid():
         kw_english = form.cleaned_data['kw_english']
         sv_english = form.cleaned_data['sv_english']
