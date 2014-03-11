@@ -6,10 +6,11 @@ from django.contrib.auth.models import Group, User
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from models import Keyword, Tld, Language, Kw_sv_language
-from forms import KeywordForm, KeywordListForm, KeywordTldForm, LanguageForm
+from forms import KeywordForm, KeywordListForm, KeywordTldForm, LanguageForm, LanguagesAllForm
 from django.forms.formsets import formset_factory
 from namecheap_api import namecheap_domains_check
 import unittest
+from settings import LANGUAGES
 
 
 def tld_flag(k, tld_all, namecheap_domains, uid):
@@ -21,15 +22,28 @@ def tld_flag(k, tld_all, namecheap_domains, uid):
 
 @csrf_exempt
 def home(request):
-    user = request.user
     domains = []
     form = KeywordForm()
+    kw_language = None
+    language = None
+    kwords_all = Keyword.objects.all()
+    form_lang = LanguagesAllForm(request.POST, prefix='pfix')
+    if request.method == 'POST':
+        if form_lang.is_valid():
+            try:
+                language = form_lang.cleaned_data['language']
+                try:
+                    kw_language = Kw_sv_language.objects.filter(language=language)
+                except:
+                    kw_language = None
+            except:
+                language = ''
     if form.is_valid():
         kw_english = form.cleaned_data['kw_english']
         sv_english = form.cleaned_data['sv_english']
         form.save()
     if request.GET.get('sort') == "id" or not 'sort' in request.GET:
-        kwords_all = Keyword.objects.all()
+        kwords_all = kwords_all
     if request.GET.get('sort') == "alphabetic":
         kwords_all = Keyword.objects.order_by('kw_english')
     if request.GET.get('sort') == 'descend':
@@ -37,7 +51,7 @@ def home(request):
     return render_to_response(
         'st.html',
         dict(
-             form=form,
+             form=form, form_lang=form_lang, kw_language=kw_language, language=language,
              kwords_all=kwords_all, context_instance=RequestContext(request)))
 
 

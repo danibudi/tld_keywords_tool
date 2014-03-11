@@ -22,6 +22,10 @@ class LanguageForm(Form):
                                initial=t_list, help_text='80 characters max.')
 
 
+class LanguagesAllForm(Form):
+    language = forms.ModelChoiceField(lang_all, required=True)
+
+
 class KeywordListForm(ModelForm):
     kw_english = forms.ModelMultipleChoiceField(queryset=Keyword.objects.all())
     sv_kw_english = forms.DecimalField(required=False)
