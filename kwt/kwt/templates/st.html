@@ -48,8 +48,8 @@ Keywords
             </tbody>
         </table>
         </div>
-        <div class="tkw" style="margin-left: 10em;" id="kwordslist">
-            <form name="form_lang" action="" method="post">{% csrf_token %}
+        <div class="tkw" name="lang_sub" style="margin-left: 10em;" id="kwordslist">
+            <form name="form_lang" action="" method="post" enctype="multipart/form-data">{% csrf_token %}
                 {{ form_lang.management_form }}
                 {{ form_lang.as_table }}
                 <input type="submit" name="lang_sub" value="Show keywords" />
@@ -81,26 +81,21 @@ Keywords
     </div>
 
     <div id="kwords">
-        <fieldset style='width:60%;' method="post" accept-charset="utf-8">{% csrf_token %}
-            {% for field in formset %}
-                {% if field.errors %}
-                    <div class="fieldWrapper" style="float:left;width:95%;margin:0 0 16px 0;">
-                        <p style='margin-left:10px; float: left; font-weight: bold; width:900px;'>{{ field.label_tag }}
-                        <a style='background-color:#ff9393;float:right;margin:0 0 0 5px;'>
-                        {{ field }}</a>
-                        </p>
-                {% else %}
-                    <div class="fieldWrapper" style='margin-left:1.1em!important;'>
-                        <p style='font-weight: bold;width: 900px;'>{{ field.label_tag }}
-                        <a style='width: 250px'>{{ field }}</a></p>
-                {% endif %}
-                    </div>
+        <form name='nc_sub' style='width:60%;' action="" method="post" accept-charset="utf-8">{% csrf_token %}
+
+        {{ formset.management_form }}
+        <table>
+            {% for form in formset %}
+            {{ form }}
             {% endfor %}
-            <div  style='text-align:center; _margin-top:12em'>
+        </table>
+<div  style='text-align:center; _margin-top:12em'>
                 <input class="ContactSubButton"  type="submit" name="nc_sub" value="Add"/>
                 <input class="ContactSubButton"  type="submit" name="nc_clr" value="Clear"/>
             </div>
-        </fieldset>
+</form>
+
+
     </div>
 </div>
 </body>
