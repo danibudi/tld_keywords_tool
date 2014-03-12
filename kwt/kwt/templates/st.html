@@ -7,109 +7,101 @@
 
 <head>
 <style>
-.right
+.tkw
 {
-position:absolute;
-right:50px;
-_width:300px;
-background-color:#b0e0e6;
+overflow:auto;
+background-color: #b0e0e6;
+width:30em;
+box-shadow: 0px 0px 0.5em #97CBF4;
+max-height:40em;
+vertical-align:top!important;
+display: inline-table;
 }
 </style>
-    <link href="{{ media }}favicon.ico" />
-    <title>
-        Keywords
-    </title>
+<title>
+Keywords
+</title>
 </head>
 
-<body  {% if 1 %}  style="background-image:url('/static/bground-pattern.jpg');"{% endif %} >
-
+<body style="background-image:url('/static/bground-pattern.jpg');">
 <div id="content">
-
-<div class="info" style='-width:40%'>
-<div style="max-height:40em; overflow:auto;background-color: #b0e0e6; width:30em; box-shadow: 0px 0px 0.5em #97CBF4;vertical-align:top!important;"
-class="box-menu highlight">
-    <table style='vertical-align:top!important;'>
-        <thead>
-	<tr><span style="color: #ff0000; font-size:18px; font-weight:bold; text-align:center; vertical-align:top!important;margin-left:90px;">English Keywords</span></tr>
-        <tr style='vertical-align:top!important;'>
-            <th><a href="?sort=id" style="color: #666666; font-weight:bold; font-size:13px;width:10%; ">id</a></th>
-            <th><a href="?sort=alphabetic" style="color: #666666; font-weight:bold; font-size:13px;width:50%; ">Keyword list</a></th>
-            <th><a href="?sort=descend" style="color: #666666; font-weight:bold; font-size:13px; margin-left:0px;">SV</a></th>
-        </tr>
-        </thead>
-
-        <tbody>
-            {% for kw in kwords_all %}
-            <tr>
-                <td style="background-color:white; width:10%;">{{ kw.id }}</td>
-                <td style="background-color:white; width:90%;">{{ kw.kw_english }}</td>
-                <td style="background-color:white; width:auto;">{{ kw.sv_english }}</td>
+    <div>
+        <div class="tkw" >
+        <table style='vertical-align:top!important;'>
+            <thead>
+            <tr><span style="color: #ff0000; font-size:18px; font-weight:bold; text-align:center; vertical-align:top!important;margin-left:90px;">English Keywords</span></tr>
+            <tr style='vertical-align:top!important;'>
+                <th><a href="?sort=id" style="color: #666666; font-weight:bold; font-size:13px;width:10%; ">id</a></th>
+                <th><a href="?sort=alphabetic" style="color: #666666; font-weight:bold; font-size:13px;width:50%; ">Keyword list</a></th>
+                <th><a href="?sort=descend" style="color: #666666; font-weight:bold; font-size:13px; margin-left:0px;">SV</a></th>
             </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+            </thead>
 
-<div class="right" id="kwordslist" style="top: 0.5em;">
+            <tbody>
+                {% for kw in kwords_all %}
+                <tr>
+                    <td style="background-color:white; width:10%;">{{ kw.id }}</td>
+                    <td style="background-color:white; width:90%;">{{ kw.kw_english }}</td>
+                    <td style="background-color:white; width:auto;">{{ kw.sv_english }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        <div class="tkw" style="margin-left: 10em;" id="kwordslist">
+            <form name="form_lang" action="" method="post">{% csrf_token %}
+                {{ form_lang.management_form }}
+                {{ form_lang.as_table }}
+                <input type="submit" name="lang_sub" value="Show keywords" />
+            </form>
 
-<form name="form_lang" action="" method="post">{% csrf_token %}
-    {{ form_lang.management_form }}
-    {{ form_lang.as_table }}
-    <input type="submit" name="lang_sub" value="Show keywords" />
-</form>
-
-<div style="max-height:40em; overflow:auto;background-color: #b0e0e6; width:30em; box-shadow: 0px 0px 0.5em #97CBF4;vertical-align:top!important;"
-class="box-menu highlight">
-    <table style='vertical-align:top!important;'>
-        <thead>
-	<tr><span style="color: #ff0000; font-size:18px; font-weight:bold; text-align:center; vertical-align:top!important;margin-left:90px;">
-        {% if language %} {{ language }} {% endif %} Keywords</span></tr>
-        <tr style='vertical-align:top!important;'>
-            <th><a style="color: #666666; font-weight:bold; font-size:13px;width:10%; ">id</a></th>
-            <th><a style="color: #666666; font-weight:bold; font-size:13px;width:50%; ">Keyword list</a></th>
-            <th><a style="color: #666666; font-weight:bold; font-size:13px; margin-left:0px;">SV</a></th>
-        </tr>
-        </thead>
-        <tbody>
-            {% for kw in kw_language %}
-            <tr>
-                <td style="background-color:white; width:10%;">{{ kw.kw_english.id }}</td>
-                <td style="background-color:white; width:90%;">{{ kw.kw }}</td>
-                <td style="background-color:white; width:auto;">{{ kw.sv }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-</div>
-
-</div>
-
-<div id="kwords">
-<fieldset style='width:60%;'  method="post" accept-charset="utf-8">{% csrf_token %}
-    {% for field in formset %}
-        {% if field.errors %}
-            <div class="fieldWrapper" style="float:left;width:95%;margin:0 0 16px 0;">
-                <p style='margin-left:10px; float: left; font-weight: bold; width:900px;'>{{ field.label_tag }}
-                <a style='vertical-align:top!important;background-color:#ff9393;float:right;margin:0 0 0 5px;'>
-                {{ field }}</a>
-                </p>
-        {% else %}
-            <div class="fieldWrapper" style='margin-left:1.1em!important; ' >
-                <p style='vertical-align:top!important;font-weight: bold;width: 900px;'>{{ field.label_tag }}
-                <a style='_float:right;width: 250px'>{{ field }}</a></p>
-        {% endif %}
+            <div class="tkw">
+                <table >
+                    <thead>
+                    <tr><span style="color: #ff0000; font-size:18px; font-weight:bold; text-align:center; margin-left:90px;">
+                    {% if language %} {{ language }} {% endif %} Keywords</span></tr>
+                    <tr style='vertical-align:top!important;'>
+                        <th><a style="color: #666666; font-weight:bold; font-size:13px;width:10%; ">id</a></th>
+                        <th><a style="color: #666666; font-weight:bold; font-size:13px;width:50%; ">Keyword list</a></th>
+                        <th><a style="color: #666666; font-weight:bold; font-size:13px; margin-left:0px;">SV</a></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for kw in kw_language %}
+                        <tr>
+                            <td style="background-color:white; width:10%;">{{ kw.kw_english.id }}</td>
+                            <td style="background-color:white; width:90%;">{{ kw.kw }}</td>
+                            <td style="background-color:white; width:auto;">{{ kw.sv }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-    {% endfor %}
+        </div>
     </div>
-    <div  style='text-align:center; _margin-top:12em'>
-    <input class="ContactSubButton"  type="submit" name="nc_sub" value="Add"/>
-    <input class="ContactSubButton"  type="submit" name="nc_clr" value="Clear"/>
-    </div>
-</fieldset>
 
-<br/>
-</div>
+    <div id="kwords">
+        <fieldset style='width:60%;' method="post" accept-charset="utf-8">{% csrf_token %}
+            {% for field in formset %}
+                {% if field.errors %}
+                    <div class="fieldWrapper" style="float:left;width:95%;margin:0 0 16px 0;">
+                        <p style='margin-left:10px; float: left; font-weight: bold; width:900px;'>{{ field.label_tag }}
+                        <a style='background-color:#ff9393;float:right;margin:0 0 0 5px;'>
+                        {{ field }}</a>
+                        </p>
+                {% else %}
+                    <div class="fieldWrapper" style='margin-left:1.1em!important;'>
+                        <p style='font-weight: bold;width: 900px;'>{{ field.label_tag }}
+                        <a style='width: 250px'>{{ field }}</a></p>
+                {% endif %}
+                    </div>
+            {% endfor %}
+            <div  style='text-align:center; _margin-top:12em'>
+                <input class="ContactSubButton"  type="submit" name="nc_sub" value="Add"/>
+                <input class="ContactSubButton"  type="submit" name="nc_clr" value="Clear"/>
+            </div>
+        </fieldset>
+    </div>
 </div>
 </body>
 </html>
