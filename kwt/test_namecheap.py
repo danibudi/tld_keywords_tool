@@ -30,11 +30,11 @@ class TestApi(unittest.TestCase):
 
         similar	12
         """
-        kw_sv_list = parser_data(kw_sv_data)
-        self.assertEqual(kw_sv_list, [
-            ['look', '11'], ['when', '13'], ['your', '14'],
-            ['website', '15'], ['similar', '12']])
+        kw_sv_dict = parser_data(kw_sv_data)
+        self.assertDictEqual(kw_sv_dict,
+                             {'website': '15', 'similar': '12',
+                              'when': '13', 'look': '11', 'your': '14'})
 
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='TestApi.test_parse')
+    unittest.main()

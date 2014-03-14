@@ -7,12 +7,12 @@ from settings import api_key, api_user, command, user_name, clientIp, url
 
 
 def parser_data(text=""):
-    kw_sv_list = []
+    kw_sv_dict = {}
     for line in text.split('\n'):
         kw_sv = line.strip().split('\t')
         if kw_sv != ['']:
-            kw_sv_list.append(kw_sv)
-    return kw_sv_list
+            kw_sv_dict[kw_sv[0]] = kw_sv[1]
+    return kw_sv_dict
 
 
 def namecheap_domains_check(domain_list=[]):
