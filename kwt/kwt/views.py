@@ -2,9 +2,8 @@ from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_exempt
 from django.template.context import RequestContext
 from models import Keyword, Tld, Kw_sv_language
-from forms import KeywordForm, LanguageForm, LanguagesAllForm
-from django.forms.formsets import formset_factory
-from namecheap_api import namecheap_domains_check
+from forms import LanguageForm, LanguagesAllForm, KwdSvForm
+from namecheap_api import namecheap_domains_check, parser_data
 
 
 def tld_flag(k, tld_all, namecheap_domains, uid):
@@ -18,17 +17,25 @@ def tld_flag(k, tld_all, namecheap_domains, uid):
 def home(request):
     kw_language = None
     language = None
+    kw_sv_dict = None
     kwords_all = Keyword.objects.all()
-    form = KeywordForm(request.POST)
-    KeywordFormSet = formset_factory(KeywordForm)
+    form_kwd_sv = KwdSvForm(request.POST)
     if request.method == 'POST':
-        if 'nc_sub' in request.POST:
-            formset = KeywordFormSet(request.POST)
-            if formset.is_valid():
-                for form1 in formset:
-                    form1.save()
+        if 'kw_sv_sub' in request.POST:
+            form_kwd_sv = KwdSvForm(request.POST)
+            if form_kwd_sv.is_valid():
+                kw_sv_data = form_kwd_sv.cleaned_data['kwd_sv']
+                kw_sv_dict = parser_data(kw_sv_data)
+                for k, v in kw_sv_dict.items():
+                    try:
+                        kw, created = Keyword.objects.get_or_create(
+                            kw_english=str(k))
+                        kw.sv_english = int(v)
+                        kw.save()
+                    except:
+                        print k, v
         else:
-            formset = KeywordFormSet()
+            form_kwd_sv = KwdSvForm()
         if 'lang_sub' in request.POST:
             form_lang = LanguagesAllForm(request.POST)
             if form_lang.is_valid():
@@ -44,7 +51,6 @@ def home(request):
         else:
             form_lang = LanguagesAllForm()
     else:
-        formset = KeywordFormSet()
         form_lang = LanguagesAllForm()
 
     if request.GET.get('sort') == "id" or not 'sort' in request.GET:
@@ -55,8 +61,9 @@ def home(request):
         kwords_all = Keyword.objects.order_by('sv_english')
     return render_to_response(
         'st.html',
-        dict(formset=formset, language=language,
-             form=form, form_lang=form_lang, kw_language=kw_language,
+        dict(language=language, kw_sv_dict=kw_sv_dict,
+             form_lang=form_lang, kw_language=kw_language,
+             form_kwd_sv=form_kwd_sv,
              kwords_all=kwords_all, context_instance=RequestContext(request)))
 
 

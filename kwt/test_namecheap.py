@@ -29,11 +29,14 @@ class TestApi(unittest.TestCase):
         website	15
 
         similar	12
+        ttt  34
+        ttqt  asd
         """
         kw_sv_dict = parser_data(kw_sv_data)
         self.assertDictEqual(kw_sv_dict,
-                             {'website': '15', 'similar': '12',
-                              'when': '13', 'look': '11', 'your': '14'})
+                             {'look': '11', 'similar': '12',
+                              'ttqt': 'asd', 'ttt': '34',
+                              'website': '15', 'when': '13','your': '14'})
 
 
 if __name__ == '__main__':

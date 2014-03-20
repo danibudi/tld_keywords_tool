@@ -9,9 +9,21 @@ from settings import api_key, api_user, command, user_name, clientIp, url
 def parser_data(text=""):
     kw_sv_dict = {}
     for line in text.split('\n'):
-        kw_sv = line.strip().split('\t')
+        l = line.strip()
+        try:
+            if '\t' in l:
+                kw_sv = l.split('\t')
+            else:
+                kw_sv = l.split(' ')
+            if '' in kw_sv:
+                kw_sv.remove('')
+        except:
+            kw_sv = l.split(' ')
         if kw_sv != ['']:
-            kw_sv_dict[kw_sv[0]] = kw_sv[1]
+            try:
+                kw_sv_dict[kw_sv[0]] = kw_sv[1]
+            except:
+                pass
     return kw_sv_dict
 
 
@@ -41,7 +53,8 @@ def namecheap_domains_check(domain_list=[]):
                 err_c = e.text
                 if (domains_status != {}) and err_c == 'Parameter DomainList is Missing':
                     err = err + err_c + '; '
-    for domain in root.iter('{http://api.namecheap.com/xml.response}DomainCheckResult'):
+    for domain in root.iter(
+        '{http://api.namecheap.com/xml.response}DomainCheckResult'):
         b = (domain.attrib['Available'] == 'true')
         domains_status[unicode(domain.attrib['Domain'], 'idna')] = b
     return (domains_status, err)

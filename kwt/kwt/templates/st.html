@@ -18,6 +18,12 @@ vertical-align:top!important;
 display: inline-table;
 }
 </style>
+<script>
+function add_kw_sv()
+{
+    alert('add_kw_sv')
+}
+</script>
 <title>
 Keywords
 </title>
@@ -81,21 +87,11 @@ Keywords
     </div>
 
     <div id="kwords">
-        <form name='nc_sub' style='width:60%;' action="" method="post" accept-charset="utf-8">{% csrf_token %}
-
-        {{ formset.management_form }}
-        <table>
-            {% for form in formset %}
-            {{ form }}
-            {% endfor %}
-        </table>
-<div  style='text-align:center; _margin-top:12em'>
-                <input class="ContactSubButton"  type="submit" name="nc_sub" value="Add"/>
-                <input class="ContactSubButton"  type="submit" name="nc_clr" value="Clear"/>
-            </div>
-</form>
-
-
+        <form name="form_kwd_sv" action="" name="kw_sv_sub" method="post">{% csrf_token %}
+        {{ form_kwd_sv.management_form }}
+        {{ form_kwd_sv.as_ul }}
+        <input type="submit" name="kw_sv_sub" value="Add copied kw-sv" />
+        </form>
     </div>
 </div>
 </body>

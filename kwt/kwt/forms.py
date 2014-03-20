@@ -1,4 +1,4 @@
-from django.forms import ModelForm, Form, CheckboxSelectMultiple
+from django.forms import ModelForm, Form
 from models import Keyword, Tld, Kw_sv_language, Language
 from django import forms
 
@@ -11,11 +11,6 @@ tlds = Tld.objects.all()
 OPTIONS = tuple([(t.id, t.domain) for t in tlds])
 
 
-class KeywordForm(ModelForm):
-    class Meta:
-        model = Keyword
-
-
 class LanguageForm(Form):
     language = forms.ModelChoiceField(lang_all, required=True)
     tld_list = forms.CharField(max_length=None, required=True, label='TLD',
@@ -24,6 +19,11 @@ class LanguageForm(Form):
 
 class LanguagesAllForm(Form):
     language = forms.ModelChoiceField(lang_all, required=True)
+
+
+class KwdSvForm(Form):
+    kwd_sv = forms.CharField(widget=forms.Textarea, required=True,
+                             max_length=200, help_text='200 characters max.')
 
 
 class KeywordListForm(ModelForm):
