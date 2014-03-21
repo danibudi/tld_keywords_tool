@@ -26,7 +26,7 @@ class Language(models.Model):
 class Kw_sv_language(models.Model):
     kw_english = models.ForeignKey(Keyword, verbose_name="keyword in English")
     language = models.ForeignKey(Language)
-    kw = models.CharField("keyword",max_length=200)
+    kw = models.CharField("keyword", max_length=200)
     sv = models.IntegerField('search volume', default=0)
 
     def __unicode__(self):

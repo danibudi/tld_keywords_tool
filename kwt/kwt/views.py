@@ -13,12 +13,24 @@ def tld_flag(k, tld_all, namecheap_domains, uid):
         yield tld, kw, uid.next()
 
 
+def kw_sort(language=None, method=None):
+    kw_non_translated = []
+    if method:
+        kwords_all = Keyword.objects.order_by(method)
+    else:
+        kwords_all = Keyword.objects.all()
+    for k in kwords_all:
+        if k not in [kw_lang.kw_english for kw_lang in Kw_sv_language.objects.all()]:
+            kw_non_translated.append(k)
+    print kw_non_translated, language
+    return kw_non_translated
+
+
 @csrf_exempt
 def home(request):
     kw_language = None
     language = None
     kw_sv_dict = None
-    kwords_all = Keyword.objects.all()
     form_kwd_sv = KwdSvForm(request.POST)
     if request.method == 'POST':
         if 'kw_sv_sub' in request.POST:
@@ -52,13 +64,18 @@ def home(request):
             form_lang = LanguagesAllForm()
     else:
         form_lang = LanguagesAllForm()
-
+    """
+    try:
+        language = form_lang.cleaned_data['language']
+    except:
+        language = None
+    """
     if request.GET.get('sort') == "id" or not 'sort' in request.GET:
-        kwords_all = kwords_all
+        kwords_all = kw_sort(language=language)
     if request.GET.get('sort') == "alphabetic":
-        kwords_all = Keyword.objects.order_by('kw_english')
+        kwords_all = kw_sort(language=language, method='kw_english')
     if request.GET.get('sort') == 'descend':
-        kwords_all = Keyword.objects.order_by('sv_english')
+        kwords_all = kw_sort(language=language, method='sv_english')
     return render_to_response(
         'st.html',
         dict(language=language, kw_sv_dict=kw_sv_dict,
