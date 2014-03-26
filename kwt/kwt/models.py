@@ -31,3 +31,6 @@ class Kw_sv_language(models.Model):
 
     def __unicode__(self):
         return  u'%s' % (self.kw)
+
+    class Meta:
+        unique_together = ("language", "kw")

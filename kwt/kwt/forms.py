@@ -34,21 +34,25 @@ class Kw_sv_languageForm(Form):
 class KwdSvForm(Form):
     kwd_sv = forms.CharField(widget=forms.Textarea, required=False,
                              max_length=200, help_text='200 characters max.')
-    language = forms.ModelChoiceField(lang_all, required=True)
+    language = forms.ModelChoiceField(lang_all, required=False)
 
 
 class KeywordListForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(KeywordListForm, self).__init__(*args, **kwargs)
-        self.fields['kw_english'] = forms.CharField(widget=forms.TextInput(
-            attrs={'class': 'disabled', 'readonly': 'readonly', 'style': 'width:100px;'}))
-        self.fields['kw'] = forms.CharField(widget=forms.TextInput(
-            attrs={'style': 'width:100px;'}))
         self.fields['sv'].widget.attrs = {'style': 'width:70px;'}
-        self.fields['language'].widget.attrs = {'style': 'visibility: hidden;'}
+        self.fields['language'].widget.attrs = {'style': 'display: none;'}
+        self.fields['language'].label=''
+        self.fields['kw_english'].label=''
+        self.fields['kw'].label=''
+        self.fields['sv'].label=''
 
     class Meta:
         model = Kw_sv_language
+        widgets = dict(
+            kw_english=forms.TextInput(attrs={'class': 'disabled', 'readonly': 'readonly', 'style': 'width:100px;'}),
+            kw=forms.TextInput(attrs={'style': 'width:100px;'}),
+        )
 
 
 class KeywordTldForm(Form):

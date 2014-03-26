@@ -33,7 +33,6 @@ def home(request):
     kw_language = None
     language = None
     kw_sv_dict = None
-    oh = ''
     form_kwd_sv = KwdSvForm(prefix='kw_sv_sub')
     if request.method == 'POST':
         form_kwd_sv = KwdSvForm(request.POST, prefix='kw_sv_sub')
@@ -49,26 +48,22 @@ def home(request):
                         kw.save()
                     except:
                         print k, v
-        language = form_kwd_sv.cleaned_data['language']
-        kwords_untranslated = kw_sort(language=language)
-        KeywordListFormSet = formset_factory(KeywordListForm, extra=len(kwords_untranslated))
-        formset = KeywordListFormSet(data=request.POST,  prefix='trans_kw')
-        #~ if 'trans_kw' in request.POST:
-            #~ for form_tr in formset:
-                #~ form_tr.lan
-
-        if 'selected_lang_sub' in request.POST:
-            print 'selected_lang_sub--------------'
-        print 92, language
-        oh = request.POST['kw_sv_sub-language']
-        try:
-            print 'request.POST 75-------', oh
-        except:
-            print 'request.POST 76', request.POST
-    else:
+        if form_kwd_sv.is_valid():
+            language = form_kwd_sv.cleaned_data['language']
+            kwords_untranslated = kw_sort(language=language)
+            KeywordListFormSet = formset_factory(KeywordListForm, extra=0)
+            if 'lang_sub' in request.POST or 'kw_sv_sub' in request.POST and language is not None:
+                x_post = [dict(kw_english=kw, language=language.id) for kw in kwords_untranslated]
+                formset = KeywordListFormSet(initial=x_post, prefix='trans_kw')
+            else:
+                formset = KeywordListFormSet(data=request.POST, prefix='trans_kw')
+                #~ for form_tr in formset:
+                    #~ form_tr.lan
+    if language is None:
         kwords_untranslated = Keyword.objects.all()
-        KeywordListFormSet = formset_factory(KeywordListForm, extra=len(kwords_untranslated))
-        formset = KeywordListFormSet(prefix='trans_kw')
+        KeywordListFormSet = formset_factory(KeywordListForm, extra=0)
+        x_post = [dict(kw_english=kw) for kw in kwords_untranslated]
+        formset = KeywordListFormSet(initial=x_post, prefix='trans_kw')
     if request.GET.get('sort') == "id" or not 'sort' in request.GET:
         kwords_all = kw_sort(language=language)
     if request.GET.get('sort') == "alphabetic":
