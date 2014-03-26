@@ -16,7 +16,47 @@ box-shadow: 0px 0px 0.5em #97CBF4;
 max-height:40em;
 vertical-align:top!important;
 display: inline-table;
+
 }
+
+.table_kw {
+        width: 100px;
+        margin: 20px auto;
+	border-collapse:collapse;
+	border-spacing: 0;
+	}
+.table_kw td {
+        background-color: red;
+        border: 0;
+        min-height: 20px;
+}
+.textarea {
+    border: none;
+    width: 100%;
+    -webkit-box-sizing: border-box; /* <=iOS4, <= Android  2.3 */
+    -moz-box-sizing: border-box; /* FF1+ */
+    box-sizing: border-box; /* Chrome, IE8, Opera, Safari 5.1*/
+}
+var editable = document.getElementById('editable');
+addEvent(editable, 'blur', function () {
+  // lame that we're hooking the blur event
+  localStorage.setItem('contenteditable', this.innerHTML);
+  document.designMode = 'off';
+});
+
+addEvent(editable, 'focus', function () {
+  document.designMode = 'on';
+});
+
+addEvent(document.getElementById('clear'), 'click', function () {
+  localStorage.clear();
+  window.location = window.location; // refresh
+});
+
+if (localStorage.getItem('contenteditable')) {
+  editable.innerHTML = localStorage.getItem('contenteditable');
+}
+
 </style>
 <script>
 function add_kw_sv()
@@ -42,7 +82,6 @@ Keywords
                 <th><a href="?sort=descend" style="color: #666666; font-weight:bold; font-size:13px; margin-left:0px;">SV</a></th>
             </tr>
             </thead>
-
             <tbody>
                 {% for kw in kwords_all %}
                 <tr>
@@ -54,43 +93,31 @@ Keywords
             </tbody>
         </table>
         </div>
-        <div class="tkw" name="lang_sub" style="margin-left: 10em;" id="kwordslist">
-            <form name="form_lang" action="" method="post" enctype="multipart/form-data">{% csrf_token %}
-                {{ form_lang.management_form }}
-                {{ form_lang.as_table }}
-                <input type="submit" name="lang_sub" value="Show keywords" />
-            </form>
-
-            <div class="tkw">
-                <table >
-                    <thead>
+    </div>
+    <div  >
+        <form action="" name="kw_sv_sub" method="post">{% csrf_token %}
+        <div class="tkw" name="lang_sub"  id="kwordslist" style="margin-left: 40em;margin-top: -3em;">
+            <table >
+                <thead>
                     <tr><span style="color: #ff0000; font-size:18px; font-weight:bold; text-align:center; margin-left:90px;">
-                    {% if language %} {{ language }} {% endif %} Keywords</span></tr>
-                    <tr style='vertical-align:top!important;'>
+                    {% if language %} {{ language }} {% endif %} Keywords</span></tr><br/>
+                    <p><tr style='vertical-align:top!important;'>
                         <th><a style="color: #666666; font-weight:bold; font-size:13px;width:10%; ">id</a></th>
                         <th><a style="color: #666666; font-weight:bold; font-size:13px;width:50%; ">Keyword list</a></th>
                         <th><a style="color: #666666; font-weight:bold; font-size:13px; margin-left:0px;">SV</a></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        {% for kw in kw_language %}
-                        <tr>
-                            <td style="background-color:white; width:10%;">{{ kw.kw_english.id }}</td>
-                            <td style="background-color:white; width:90%;">{{ kw.kw }}</td>
-                            <td style="background-color:white; width:auto;">{{ kw.sv }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                    </tr></p>
+                </thead>
+            </table>
+            {{ formset.management_form }}
+            {% for form in formset %}
+               {{ form }}<br/>
+            {% endfor %}
+        <input type="submit" name="trans_kw" value="Add translated" />
         </div>
-    </div>
-
-    <div id="kwords">
-        <form name="form_kwd_sv" action="" name="kw_sv_sub" method="post">{% csrf_token %}
         {{ form_kwd_sv.management_form }}
         {{ form_kwd_sv.as_ul }}
         <input type="submit" name="kw_sv_sub" value="Add copied kw-sv" />
+        <input type="submit" name="selected_lang_sub" value="Add keywords" />
         </form>
     </div>
 </div>

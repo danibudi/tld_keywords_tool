@@ -1,9 +1,10 @@
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from django.views.decorators.csrf import csrf_exempt
 from django.template.context import RequestContext
 from models import Keyword, Tld, Kw_sv_language
-from forms import LanguageForm, LanguagesAllForm, KwdSvForm
+from forms import LanguageForm, KwdSvForm, KeywordListForm
 from namecheap_api import namecheap_domains_check, parser_data
+from django.forms.formsets import formset_factory
 
 
 def tld_flag(k, tld_all, namecheap_domains, uid):
@@ -20,9 +21,10 @@ def kw_sort(language=None, method=None):
     else:
         kwords_all = Keyword.objects.all()
     for k in kwords_all:
-        if k not in [kw_lang.kw_english for kw_lang in Kw_sv_language.objects.all()]:
+        k_trans = Kw_sv_language.objects.filter(kw_english=k, language=language)
+        if k_trans.count() == 0:
             kw_non_translated.append(k)
-    print kw_non_translated, language
+    print 25, kw_non_translated, language
     return kw_non_translated
 
 
@@ -31,10 +33,11 @@ def home(request):
     kw_language = None
     language = None
     kw_sv_dict = None
-    form_kwd_sv = KwdSvForm(request.POST)
+    oh = ''
+    form_kwd_sv = KwdSvForm(prefix='kw_sv_sub')
     if request.method == 'POST':
+        form_kwd_sv = KwdSvForm(request.POST, prefix='kw_sv_sub')
         if 'kw_sv_sub' in request.POST:
-            form_kwd_sv = KwdSvForm(request.POST)
             if form_kwd_sv.is_valid():
                 kw_sv_data = form_kwd_sv.cleaned_data['kwd_sv']
                 kw_sv_dict = parser_data(kw_sv_data)
@@ -46,42 +49,40 @@ def home(request):
                         kw.save()
                     except:
                         print k, v
-        else:
-            form_kwd_sv = KwdSvForm()
-        if 'lang_sub' in request.POST:
-            form_lang = LanguagesAllForm(request.POST)
-            if form_lang.is_valid():
-                try:
-                    language = form_lang.cleaned_data['language']
-                    try:
-                        kw_language = Kw_sv_language.objects.filter(
-                            language=language)
-                    except:
-                        kw_language = None
-                except:
-                    language = ''
-        else:
-            form_lang = LanguagesAllForm()
+        language = form_kwd_sv.cleaned_data['language']
+        kwords_untranslated = kw_sort(language=language)
+        KeywordListFormSet = formset_factory(KeywordListForm, extra=len(kwords_untranslated))
+        formset = KeywordListFormSet(data=request.POST,  prefix='trans_kw')
+        #~ if 'trans_kw' in request.POST:
+            #~ for form_tr in formset:
+                #~ form_tr.lan
+
+        if 'selected_lang_sub' in request.POST:
+            print 'selected_lang_sub--------------'
+        print 92, language
+        oh = request.POST['kw_sv_sub-language']
+        try:
+            print 'request.POST 75-------', oh
+        except:
+            print 'request.POST 76', request.POST
     else:
-        form_lang = LanguagesAllForm()
-    """
-    try:
-        language = form_lang.cleaned_data['language']
-    except:
-        language = None
-    """
+        kwords_untranslated = Keyword.objects.all()
+        KeywordListFormSet = formset_factory(KeywordListForm, extra=len(kwords_untranslated))
+        formset = KeywordListFormSet(prefix='trans_kw')
     if request.GET.get('sort') == "id" or not 'sort' in request.GET:
         kwords_all = kw_sort(language=language)
     if request.GET.get('sort') == "alphabetic":
         kwords_all = kw_sort(language=language, method='kw_english')
     if request.GET.get('sort') == 'descend':
         kwords_all = kw_sort(language=language, method='sv_english')
-    return render_to_response(
+    #~ return render_to_response(
+    return render(request,
         'st.html',
         dict(language=language, kw_sv_dict=kw_sv_dict,
-             form_lang=form_lang, kw_language=kw_language,
+             kw_language=kw_language,  # formset_len=formset_len,
              form_kwd_sv=form_kwd_sv,
-             kwords_all=kwords_all, context_instance=RequestContext(request)))
+             formset=formset,
+             kwords_all=kwords_untranslated, context_instance=RequestContext(request)))
 
 
 @csrf_exempt
@@ -117,7 +118,7 @@ def grid(request):
             return render_to_response(
                 'grid.html', dict(domains=domains,
                                   namecheap_domains=namecheap_domains,
-                                  form_lang=form_lang, formset=None,
+                                  form_lang=form_lang,
                                   tld_all=tld_all, kw=kw, grid=grid,
                                   context_instance=RequestContext(request)))
     else:
@@ -125,5 +126,5 @@ def grid(request):
     return render_to_response(
         'grid.html', dict(
             domains=None, namecheap_domains=namecheap_domains,
-            form_lang=form_lang, formset=None,
+            form_lang=form_lang,
             context_instance=RequestContext(request)))
