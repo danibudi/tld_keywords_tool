@@ -40,7 +40,10 @@ class KwdSvForm(Form):
 class KeywordListForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(KeywordListForm, self).__init__(*args, **kwargs)
-        self.fields['sv'].widget.attrs = {'style': 'width:70px;'}
+        self.fields['sv'].widget.attrs = {'style': 'width:20%;'}
+        self.fields['kw'].widget.attrs = {'style': 'width:auto;'}
+        self.fields['kw_english'].widget.attrs = {'style': 'width:10%;'}
+        self.fields['language'].widget.attrs = {'style': 'width:0%;'}
         self.fields['language'].widget.attrs = {'style': 'display: none;'}
         self.fields['language'].label=''
         self.fields['kw_english'].label=''

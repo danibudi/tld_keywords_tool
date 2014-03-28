@@ -11,24 +11,21 @@
 {
 overflow:auto;
 background-color: #b0e0e6;
-width:30em;
 box-shadow: 0px 0px 0.5em #97CBF4;
 max-height:40em;
 vertical-align:top!important;
-display: inline-table;
-
 }
 
 .table_kw {
-        width: 100px;
-        margin: 20px auto;
-	border-collapse:collapse;
-	border-spacing: 0;
-	}
+    _width: 100px;
+    margin: 20px auto;
+    border-collapse:collapse;
+    border-spacing: 0;
+    }
 .table_kw td {
-        background-color: red;
-        border: 0;
-        min-height: 20px;
+    background-color: red;
+    border: 0;
+    min-height: 20px;
 }
 .textarea {
     border: none;
@@ -37,6 +34,13 @@ display: inline-table;
     -moz-box-sizing: border-box; /* FF1+ */
     box-sizing: border-box; /* Chrome, IE8, Opera, Safari 5.1*/
 }
+
+.helptext {
+    font-size: small;
+    font-style: italic;
+    color: red;
+}
+
 var editable = document.getElementById('editable');
 addEvent(editable, 'blur', function () {
   // lame that we're hooking the blur event
@@ -57,6 +61,66 @@ if (localStorage.getItem('contenteditable')) {
   editable.innerHTML = localStorage.getItem('contenteditable');
 }
 
+.flex-container {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-direction: normal;
+    -moz-box-direction: normal;
+    -webkit-box-orient: horizontal;
+    -moz-box-orient: horizontal;
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-flex-wrap: nowrap;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    -webkit-box-pack: start;
+    -moz-box-pack: start;
+    -webkit-justify-content: flex-start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+    -webkit-align-content: stretch;
+    -ms-flex-line-pack: stretch;
+    align-content: stretch;
+    -webkit-box-align: start;
+    -moz-box-align: start;
+    -webkit-align-items: flex-start;
+    -ms-flex-align: start;
+    align-items: flex-start;
+    }
+
+.flex-item:{
+    -webkit-box-ordinal-group: 1;
+    -moz-box-ordinal-group: 1;
+    -webkit-order: 0;
+    -ms-flex-order: 0;
+    order: 0;
+    -webkit-box-flex: 0;
+    -moz-box-flex: 0;
+    -webkit-flex: 0 1 auto;
+    -ms-flex: 0 1 auto;
+    flex: 0 1 auto;
+    -webkit-align-self: auto;
+    -ms-flex-item-align: auto;
+    align-self: auto;
+    margin-left: 3em;
+    }
+
+/*
+    Legacy Firefox implementation treats all flex containers
+    as inline-block elements.
+*/
+
+@-moz-document url-prefix() {
+.flex-container {
+    width: 100%;
+    -moz-box-sizing: border-box;
+    }
+
+}
 </style>
 <script>
 function add_kw_sv()
@@ -70,23 +134,24 @@ Keywords
 </head>
 
 <body style="background-image:url('/static/bground-pattern.jpg');">
-<div id="content">
-    <div>
+<div class="flex-container" id="content">
+    <div class="flex-item" style="margin-left: 1em; width: 25em;">
         <div class="tkw" >
         <table style='vertical-align:top!important;'>
             <thead>
-            <tr><span style="color: #ff0000; font-size:18px; font-weight:bold; text-align:center; vertical-align:top!important;margin-left:90px;">English Keywords</span></tr>
+            <tr><span style="color: #ff0000; font-size:18px; font-weight:bold; text-align:center;
+            vertical-align:top!important;margin-left:90px;">English Keywords</span></tr>
             <tr style='vertical-align:top!important;'>
                 <th><a href="?sort=id" style="color: #666666; font-weight:bold; font-size:13px;width:10%; ">id</a></th>
-                <th><a href="?sort=alphabetic" style="color: #666666; font-weight:bold; font-size:13px;width:50%; ">Keyword list</a></th>
-                <th><a href="?sort=descend" style="color: #666666; font-weight:bold; font-size:13px; margin-left:0px;">SV</a></th>
+                <th><a href="?sort=alphabetic" style="color: #666666; font-weight:bold; font-size:13px;width:40%; ">Keyword list</a></th>
+                <th><a href="?sort=descend" style="color: #666666; font-weight:bold; font-size:13px; margin-left:0px;width:50%">SV</a></th>
             </tr>
             </thead>
             <tbody>
                 {% for kw in kwords_all %}
                 <tr>
                     <td style="background-color:white; width:10%;">{{ kw.id }}</td>
-                    <td style="background-color:white; width:90%;">{{ kw.kw_english }}</td>
+                    <td style="background-color:white; width:80%;">{{ kw.kw_english }}</td>
                     <td style="background-color:white; width:auto;">{{ kw.sv_english }}</td>
                 </tr>
                 {% endfor %}
@@ -94,24 +159,29 @@ Keywords
         </table>
         </div>
     </div>
-    <div  >
+    <div class="flex-item" style="margin-left: 4em; width: 25em;">
         <form action="" name="kw_sv_sub" method="post">{% csrf_token %}
-        <div class="tkw" name="lang_sub"  id="kwordslist" style="margin-left: 40em;margin-top: -3em;">
+        <div class="tkw" name="lang_sub" id="kwordslist">
             <table >
+            {% if formset.errors %}
+            <p style="color: red;">
+            Please correct the error{{ formset.errors|pluralize }} below.
+            </p>
+            {% endif %}
                 <thead>
                     <tr><span style="color: #ff0000; font-size:18px; font-weight:bold; text-align:center; margin-left:90px;">
-                    {% if language %} {{ language }} {% endif %} Keywords</span></tr><br/>
-                    <p><tr style='vertical-align:top!important;'>
+                    {% if language %} {{ language }} {% endif %} Keywords</span></tr>
+                    <tr style='vertical-align:top!important;'>
                         <th><a style="color: #666666; font-weight:bold; font-size:13px;width:10%; ">id</a></th>
                         <th><a style="color: #666666; font-weight:bold; font-size:13px;width:50%; ">Keyword list</a></th>
                         <th><a style="color: #666666; font-weight:bold; font-size:13px; margin-left:0px;">SV</a></th>
-                    </tr></p>
+                    </tr>
                 </thead>
             </table>
-            {{ formset.management_form }}
+            <div class="tkw">{{ formset.management_form }}
             {% for form in formset %}
                {{ form }}<br/>
-            {% endfor %}
+            {% endfor %}</div>
         <input type="submit" name="trans_kw" value="Add translated" />
         </div>
         {{ form_kwd_sv.management_form }}

@@ -24,7 +24,6 @@ def kw_sort(language=None, method=None):
         k_trans = Kw_sv_language.objects.filter(kw_english=k, language=language)
         if k_trans.count() == 0:
             kw_non_translated.append(k)
-    print 25, kw_non_translated, language
     return kw_non_translated
 
 
@@ -52,18 +51,29 @@ def home(request):
             language = form_kwd_sv.cleaned_data['language']
             kwords_untranslated = kw_sort(language=language)
             KeywordListFormSet = formset_factory(KeywordListForm, extra=0)
-            if 'lang_sub' in request.POST or 'kw_sv_sub' in request.POST and language is not None:
+            if ('lang_sub' in request.POST or 'kw_sv_sub' in request.POST) and language is not None:
                 x_post = [dict(kw_english=kw, language=language.id) for kw in kwords_untranslated]
                 formset = KeywordListFormSet(initial=x_post, prefix='trans_kw')
             else:
                 formset = KeywordListFormSet(data=request.POST, prefix='trans_kw')
-                #~ for form_tr in formset:
-                    #~ form_tr.lan
+            if 'trans_kw' in request.POST:
+                for form_kw_lang in formset:
+                    if form_kw_lang.is_valid():
+                        form_kw_lang.save()
+                    else:
+                        print dir(formset)
+                kwords_untranslated = kw_sort(language=language)
+                if language:
+                    x_post = [dict(kw_english=kw, language=language.id) for kw in kwords_untranslated]
+                else:
+                    x_post = []
+                formset = KeywordListFormSet(initial=x_post, prefix='trans_kw')
     if language is None:
         kwords_untranslated = Keyword.objects.all()
         KeywordListFormSet = formset_factory(KeywordListForm, extra=0)
         x_post = [dict(kw_english=kw) for kw in kwords_untranslated]
         formset = KeywordListFormSet(initial=x_post, prefix='trans_kw')
+    print request.GET.get('sort')
     if request.GET.get('sort') == "id" or not 'sort' in request.GET:
         kwords_all = kw_sort(language=language)
     if request.GET.get('sort') == "alphabetic":
