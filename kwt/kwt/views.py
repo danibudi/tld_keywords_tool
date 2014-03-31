@@ -1,4 +1,4 @@
-from django.shortcuts import render_to_response, render
+from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_exempt
 from django.template.context import RequestContext
 from models import Keyword, Tld, Kw_sv_language
@@ -21,7 +21,8 @@ def kw_sort(language=None, method=None):
     else:
         kwords_all = Keyword.objects.all()
     for k in kwords_all:
-        k_trans = Kw_sv_language.objects.filter(kw_english=k, language=language)
+        k_trans = Kw_sv_language.objects.filter(kw_english=k,
+                                                language=language)
         if k_trans.count() == 0:
             kw_non_translated.append(k)
     return kw_non_translated
@@ -46,25 +47,35 @@ def home(request):
                         kw.sv_english = int(v)
                         kw.save()
                     except:
-                        print k, v
+                        pass
         if form_kwd_sv.is_valid():
             language = form_kwd_sv.cleaned_data['language']
             kwords_untranslated = kw_sort(language=language)
             KeywordListFormSet = formset_factory(KeywordListForm, extra=0)
             if ('lang_sub' in request.POST or 'kw_sv_sub' in request.POST) and language is not None:
-                x_post = [dict(kw_english=kw, language=language.id) for kw in kwords_untranslated]
+                x_post = [
+                    dict(kw_english=kw,
+                         language=language.id) for kw in kwords_untranslated]
                 formset = KeywordListFormSet(initial=x_post, prefix='trans_kw')
             else:
-                formset = KeywordListFormSet(data=request.POST, prefix='trans_kw')
+                formset = KeywordListFormSet(data=request.POST,
+                                             prefix='trans_kw')
+            if 'clear_trans_kw' in request.POST:
+                x_post = []
+                x_post = [dict(
+                    kw_english=kw,
+                    language=language.id) for kw in kwords_untranslated]
+                formset = KeywordListFormSet(initial=x_post, prefix='trans_kw')
             if 'trans_kw' in request.POST:
                 for form_kw_lang in formset:
                     if form_kw_lang.is_valid():
                         form_kw_lang.save()
-                    else:
-                        print dir(formset)
                 kwords_untranslated = kw_sort(language=language)
                 if language:
-                    x_post = [dict(kw_english=kw, language=language.id) for kw in kwords_untranslated]
+                    x_post = [dict(
+                        kw_english=kw,
+                        language=language.id) for kw in kwords_untranslated]
+                    #~ request.session["name"] = language.id
                 else:
                     x_post = []
                 formset = KeywordListFormSet(initial=x_post, prefix='trans_kw')
@@ -73,21 +84,19 @@ def home(request):
         KeywordListFormSet = formset_factory(KeywordListForm, extra=0)
         x_post = [dict(kw_english=kw) for kw in kwords_untranslated]
         formset = KeywordListFormSet(initial=x_post, prefix='trans_kw')
-    print request.GET.get('sort')
     if request.GET.get('sort') == "id" or not 'sort' in request.GET:
-        kwords_all = kw_sort(language=language)
+        kwords_untranslated = kw_sort(language=language)
     if request.GET.get('sort') == "alphabetic":
-        kwords_all = kw_sort(language=language, method='kw_english')
+        kwords_untranslated = kw_sort(language=language, method='kw_english')
     if request.GET.get('sort') == 'descend':
-        kwords_all = kw_sort(language=language, method='sv_english')
-    #~ return render_to_response(
-    return render(request,
+        kwords_untranslated = kw_sort(language=language, method='sv_english')
+    form_kwd_sv = KwdSvForm({'language': language}, prefix='kw_sv_sub')
+    return render_to_response(
         'st.html',
         dict(language=language, kw_sv_dict=kw_sv_dict,
-             kw_language=kw_language,  # formset_len=formset_len,
-             form_kwd_sv=form_kwd_sv,
-             formset=formset,
-             kwords_all=kwords_untranslated, context_instance=RequestContext(request)))
+             kw_language=kw_language, form_kwd_sv=form_kwd_sv,
+             formset=formset, kwords_all=kwords_untranslated),
+        context_instance=RequestContext(request))
 
 
 @csrf_exempt

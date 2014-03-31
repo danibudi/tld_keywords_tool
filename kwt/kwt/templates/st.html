@@ -14,14 +14,30 @@ background-color: #b0e0e6;
 box-shadow: 0px 0px 0.5em #97CBF4;
 max-height:40em;
 vertical-align:top!important;
+width: 25em;
+}
+.title{
+    color: blue;
+    font-size:18px;
+    font-weight:bold;
+    text-align:center;
+    margin-left:90px;
+}
+.errorlist {
+   font-size: small!important;
 }
 
+ul.errorlist {
+   font-size: small!important;
+   color: red;
+   text-align: left;
+}
 .table_kw {
     _width: 100px;
     margin: 20px auto;
     border-collapse:collapse;
     border-spacing: 0;
-    }
+}
 .table_kw td {
     background-color: red;
     border: 0;
@@ -38,7 +54,7 @@ vertical-align:top!important;
 .helptext {
     font-size: small;
     font-style: italic;
-    color: red;
+    color: green;
 }
 
 var editable = document.getElementById('editable');
@@ -90,7 +106,7 @@ if (localStorage.getItem('contenteditable')) {
     -webkit-align-items: flex-start;
     -ms-flex-align: start;
     align-items: flex-start;
-    }
+}
 
 .flex-item:{
     -webkit-box-ordinal-group: 1;
@@ -106,8 +122,7 @@ if (localStorage.getItem('contenteditable')) {
     -webkit-align-self: auto;
     -ms-flex-item-align: auto;
     align-self: auto;
-    margin-left: 3em;
-    }
+}
 
 /*
     Legacy Firefox implementation treats all flex containers
@@ -123,9 +138,21 @@ if (localStorage.getItem('contenteditable')) {
 }
 </style>
 <script>
-function add_kw_sv()
-{
-    alert('add_kw_sv')
+function get_submit_button() {
+    var inputs = document.getElementsByTagName('INPUT');
+    for(var i=0; i < inputs.length; i++) {
+        var inp = inputs[i];
+        if(inp.value == 'Set language') {
+            return inp;
+            break; // exits the loop
+        }
+    }
+    return false;
+}
+
+function click_submit() {
+    var inp = get_submit_button();
+    if(inp) inp.click();
 }
 </script>
 <title>
@@ -134,13 +161,14 @@ Keywords
 </head>
 
 <body style="background-image:url('/static/bground-pattern.jpg');">
+<form action="" name="kw_sv_sub" method="post">{% csrf_token %}
+
 <div class="flex-container" id="content">
-    <div class="flex-item" style="margin-left: 1em; width: 25em;">
+    <div class="flex-item">
         <div class="tkw" >
         <table style='vertical-align:top!important;'>
             <thead>
-            <tr><span style="color: #ff0000; font-size:18px; font-weight:bold; text-align:center;
-            vertical-align:top!important;margin-left:90px;">English Keywords</span></tr>
+            <tr><span class="title">English Keywords</span></tr>
             <tr style='vertical-align:top!important;'>
                 <th><a href="?sort=id" style="color: #666666; font-weight:bold; font-size:13px;width:10%; ">id</a></th>
                 <th><a href="?sort=alphabetic" style="color: #666666; font-weight:bold; font-size:13px;width:40%; ">Keyword list</a></th>
@@ -149,8 +177,8 @@ Keywords
             </thead>
             <tbody>
                 {% for kw in kwords_all %}
-                <tr>
-                    <td style="background-color:white; width:10%;">{{ kw.id }}</td>
+                <tr style="padding-bottom: .1em;">
+                    <td style="background-color:white; width:10%;padding-bottom: .15em;">{{ kw.id }}</td>
                     <td style="background-color:white; width:80%;">{{ kw.kw_english }}</td>
                     <td style="background-color:white; width:auto;">{{ kw.sv_english }}</td>
                 </tr>
@@ -159,38 +187,48 @@ Keywords
         </table>
         </div>
     </div>
-    <div class="flex-item" style="margin-left: 4em; width: 25em;">
-        <form action="" name="kw_sv_sub" method="post">{% csrf_token %}
+    <div class="flex-item" style="margin-left: 4em;">
         <div class="tkw" name="lang_sub" id="kwordslist">
-            <table >
+            <input type="submit" name="lang_sub" value="Set language" style="visibility: hidden; height: 0em"/>
+            <table width=100% >
             {% if formset.errors %}
             <p style="color: red;">
-            Please correct the error{{ formset.errors|pluralize }} below.
+            Please correct the error below. {{ formset.errors }}
             </p>
             {% endif %}
                 <thead>
-                    <tr><span style="color: #ff0000; font-size:18px; font-weight:bold; text-align:center; margin-left:90px;">
-                    {% if language %} {{ language }} {% endif %} Keywords</span></tr>
+                    <tr><p class="title" style="margin: -0.4em; padding: 0em; max-width: 22em;">
+                    Add{% if language %} {{ language }} {% endif %} Keywords {{ form_kwd_sv.language }}</p></tr>
                     <tr style='vertical-align:top!important;'>
-                        <th><a style="color: #666666; font-weight:bold; font-size:13px;width:10%; ">id</a></th>
-                        <th><a style="color: #666666; font-weight:bold; font-size:13px;width:50%; ">Keyword list</a></th>
-                        <th><a style="color: #666666; font-weight:bold; font-size:13px; margin-left:0px;">SV</a></th>
+                        <td style="color: #666666; font-weight:bold; font-size:13px;width:15%;">id</td>
+                        <td style="color: #666666; font-weight:bold; font-size:13px;width:65%;">Keywords</td>
+                        <td style="color: #666666; font-weight:bold; font-size:13px; margin-left:0px;">SV</td>
                     </tr>
                 </thead>
             </table>
-            <div class="tkw">{{ formset.management_form }}
+            <div class="tkw" >{{ formset.management_form }}
             {% for form in formset %}
-               {{ form }}<br/>
-            {% endfor %}</div>
+            {{ form }}<br/>
+            {% endfor %}
+            </div>
         <input type="submit" name="trans_kw" value="Add translated" />
+        <input type="submit" name="clear_trans_kw" value="Clear"  />
         </div>
-        {{ form_kwd_sv.management_form }}
-        {{ form_kwd_sv.as_ul }}
-        <input type="submit" name="kw_sv_sub" value="Add copied kw-sv" />
-        <input type="submit" name="lang_sub" value="Set language" />
-        <input type="submit" name="selected_lang_sub" value="Add keywords" />
-        </form>
     </div>
 </div>
+<div class="tkw">
+{{ form_kwd_sv.management_form }}
+<div class="title" style="margin-left:0em!important;">Keywords & SVs in English
+{% if form_kwd_sv.errors %}
+    <p style="color: red; font-size: small; text-align: left;">
+    Please correct the error below.</p>
+    <p style="font-size: small!important; color: red; text-align: left;"> {{ form_kwd_sv.errors }}</p>
+{% endif %}
+{{ form_kwd_sv.kwd_sv }}</div>
+<p class="helptext">200 characters max.</p>
+<input type="submit" name="kw_sv_sub" value="Add copied kw-sv" />
+<input type="submit" name="selected_lang_sub" value="Add keywords" />
+</div>
+</form>
 </body>
 </html>
