@@ -137,7 +137,17 @@ if (localStorage.getItem('contenteditable')) {
 
 }
 </style>
+<script type="text/javascript" src="/path/to/jquery-latest.js"></script>
+<script type="text/javascript" src="/path/to/jquery.tablesorter.js"></script>
 <script>
+function ts() {
+    var t = document.getElementById("myTable");
+    alert(t);
+    t.tablesorter({
+        // sort on the first column and third column, order asc
+        sortList: [[0,0],[2,0]]
+    });
+}
 function get_submit_button() {
     var inputs = document.getElementsByTagName('INPUT');
     for(var i=0; i < inputs.length; i++) {
@@ -155,6 +165,8 @@ function click_submit() {
     if(inp) inp.click();
 }
 </script>
+
+
 <title>
 Keywords
 </title>
@@ -165,16 +177,17 @@ Keywords
 
 <div class="flex-container" id="content">
     <div class="flex-item">
-        <div class="tkw" >
-        <table style='vertical-align:top!important;'>
+        <div class="tkw" ><span class="title">English Keywords</span>
+        <table id="myTable" class="tablesorter" style='vertical-align:top!important;'>
             <thead>
-            <tr><span class="title">English Keywords</span></tr>
-            <tr style='vertical-align:top!important;'>
-                <th><a href="?sort=id" style="color: #666666; font-weight:bold; font-size:13px;width:10%; ">id</a></th>
-                <th><a href="?sort=alphabetic" style="color: #666666; font-weight:bold; font-size:13px;width:40%; ">Keyword list</a></th>
-                <th><a href="?sort=descend" style="color: #666666; font-weight:bold; font-size:13px; margin-left:0px;width:50%">SV</a></th>
-            </tr>
-            </thead>
+        <tr>
+            <th style="color: #666666; font-weight:bold; font-size:13px;width:10%; ">ID</th>
+            <th style="color: #666666; font-weight:bold; font-size:13px;width:40%; ">Keywords</th>
+            <th style="color: #666666; font-weight:bold; font-size:13px;width:50%; ">SV</th>
+
+        </tr>
+    </thead>
+
             <tbody>
                 {% for kw in kwords_all %}
                 <tr style="padding-bottom: .1em;">
@@ -198,7 +211,7 @@ Keywords
             {% endif %}
                 <thead>
                     <tr><p class="title" style="margin: -0.4em; padding: 0em; max-width: 22em;">
-                    Add{% if language %} {{ language }} {% endif %} Keywords {{ form_kwd_sv.language }}</p></tr>
+                    {% if language %}Add {{ language }} Keywords {% else %}Select Language {% endif %}{{ form_kwd_sv.language }}</p></tr>
                     <tr style='vertical-align:top!important;'>
                         <td style="color: #666666; font-weight:bold; font-size:13px;width:15%;">id</td>
                         <td style="color: #666666; font-weight:bold; font-size:13px;width:65%;">Keywords</td>
@@ -226,8 +239,7 @@ Keywords
 {% endif %}
 {{ form_kwd_sv.kwd_sv }}</div>
 <p class="helptext">200 characters max.</p>
-<input type="submit" name="kw_sv_sub" value="Add copied kw-sv" />
-<input type="submit" name="selected_lang_sub" value="Add keywords" />
+<p><input type="submit" name="kw_sv_sub" value="Add copied kw-sv" /></p>
 </div>
 </form>
 </body>
