@@ -137,8 +137,15 @@ if (localStorage.getItem('contenteditable')) {
 
 }
 </style>
-<script type="text/javascript" src="/path/to/jquery-latest.js"></script>
-<script type="text/javascript" src="/path/to/jquery.tablesorter.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}jquery-latest.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}jquery.tablesorter.js/"></script>
+<script>
+$(document).ready(function()
+    {
+        $("#myTable").tablesorter();
+    }
+);
+</script>
 <script>
 function ts() {
     var t = document.getElementById("myTable");
@@ -181,7 +188,7 @@ Keywords
         <table id="myTable" class="tablesorter" style='vertical-align:top!important;'>
             <thead>
         <tr>
-            <th style="color: #666666; font-weight:bold; font-size:13px;width:10%; ">ID</th>
+            <th style="color: #666666; font-weight:bold; font-size:13px;width:10%; ">ID</a></th>
             <th style="color: #666666; font-weight:bold; font-size:13px;width:40%; ">Keywords</th>
             <th style="color: #666666; font-weight:bold; font-size:13px;width:50%; ">SV</th>
 
