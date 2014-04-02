@@ -33,6 +33,7 @@ def home(request):
     kw_language = None
     language = None
     kw_sv_dict = None
+    form_errors = []
     form_kwd_sv = KwdSvForm(prefix='kw_sv_sub')
     if request.method == 'POST':
         form_kwd_sv = KwdSvForm(request.POST, prefix='kw_sv_sub')
@@ -47,12 +48,8 @@ def home(request):
                         kw.sv_english = int(v)
                         kw.save()
                     except:
-                        print 50, k,v
-            else:
-                print 'kw_sv_sub-', form_kwd_sv.errors
-
+                        pass
         if form_kwd_sv.is_valid():
-            #~ print 52, form_kwd_sv.cleaned_data['language'],  Language.objects.get(request.session["name"])
             try:
                 language = Language.objects.get(request.session["name"])
             except:
@@ -71,7 +68,6 @@ def home(request):
                 formset = KeywordListFormSet(data=request.POST,
                                              prefix='trans_kw')
             if 'clear_trans_kw' in request.POST:
-                #~ x_post = []
                 x_post = [dict(
                     kw_english=kw,
                     language=language.id) for kw in kwords_untranslated]
@@ -80,6 +76,12 @@ def home(request):
                 for form_kw_lang in formset:
                     if form_kw_lang.is_valid():
                         form_kw_lang.save()
+                    else:
+                        form_errors.append(form_kw_lang.errors)
+                c = {'kw': [u'This field is required.']}
+                for i in range(len(form_errors)):
+                    if c in form_errors:
+                        form_errors.remove(c)
                 kwords_untranslated = kw_sort(language=language)
                 if language:
                     x_post = [dict(
@@ -100,10 +102,9 @@ def home(request):
         kwords_untranslated = kw_sort(language=language, method='kw_english')
     if request.GET.get('sort') == 'descend':
         kwords_untranslated = kw_sort(language=language, method='sv_english')
-    #~ form_kwd_sv = KwdSvForm(initial=dict(language=language), prefix='kw_sv_sub')
     return render_to_response(
         'st.html',
-        dict(language=language, kw_sv_dict=kw_sv_dict,
+        dict(language=language, kw_sv_dict=kw_sv_dict, form_errors = form_errors,
              kw_language=kw_language, form_kwd_sv=form_kwd_sv,
              formset=formset, kwords_all=kwords_untranslated),
         context_instance=RequestContext(request))

@@ -143,25 +143,18 @@ if (localStorage.getItem('contenteditable')) {
 $(document).ready(function()
     {
         $("#myTable").tablesorter();
+        $("#TranslatedTable").tablesorter();
     }
 );
 </script>
 <script>
-function ts() {
-    var t = document.getElementById("myTable");
-    alert(t);
-    t.tablesorter({
-        // sort on the first column and third column, order asc
-        sortList: [[0,0],[2,0]]
-    });
-}
 function get_submit_button() {
     var inputs = document.getElementsByTagName('INPUT');
     for(var i=0; i < inputs.length; i++) {
         var inp = inputs[i];
         if(inp.value == 'Set language') {
             return inp;
-            break; // exits the loop
+            break; // exits the loop #id_trans_kw-0-kw
         }
     }
     return false;
@@ -187,52 +180,63 @@ Keywords
         <div class="tkw" ><span class="title">English Keywords</span>
         <table id="myTable" class="tablesorter" style='vertical-align:top!important;'>
             <thead>
-        <tr>
+            <tr>
             <th style="color: #666666; font-weight:bold; font-size:13px;width:10%; ">ID</a></th>
             <th style="color: #666666; font-weight:bold; font-size:13px;width:40%; ">Keywords</th>
             <th style="color: #666666; font-weight:bold; font-size:13px;width:50%; ">SV</th>
-
-        </tr>
-    </thead>
+            </tr>
+            </thead>
 
             <tbody>
                 {% for kw in kwords_all %}
-                <tr style="padding-bottom: .1em;">
-                    <td style="background-color:white; width:10%;padding-bottom: .15em;">{{ kw.id }}</td>
-                    <td style="background-color:white; width:80%;">{{ kw.kw_english }}</td>
-                    <td style="background-color:white; width:auto;">{{ kw.sv_english }}</td>
+                <tr  width=100%>
+                    <td style="background-color:white; width:10%;padding-bottom: 0.25em;padding-top: 0.21em;">{{ kw.id }}</td>
+                    <td style="background-color:white; width:78%;padding-bottom: 0.25em;padding-top: 0.21em;">{{ kw.kw_english }}</td>
+                    <td style="background-color:white; width:auto;padding-bottom: 0.25em;padding-top: 0.21em;">{{ kw.sv_english }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
         </div>
     </div>
-    <div class="flex-item" style="margin-left: 4em;">
-        <div class="tkw" name="lang_sub" id="kwordslist">
+    <div class="flex-item" style="margin-left: 4em; ">
+        <div class="tkw" name="lang_sub" id="kwordslist" style="overflow-x:hidden!important">
             <input type="submit" name="lang_sub" value="Set language" style="visibility: hidden; height: 0em"/>
-            <table width=100% >
-            {% if formset.errors %}
-            <p style="color: red;">
-            Please correct the error below. {{ formset.errors }}
+
+            <p class="title" style="margin: -0.4em; padding: 0em; max-width: 24em;">
+                {% if language %}Add {{ language }} Keywords {% else %}Select Language {% endif %}{{ form_kwd_sv.language }}
             </p>
-            {% endif %}
+            <table id="TranslatedTable" class="tablesorter" style="font-size:10px!important; padding-bottom: .05em!important;">
                 <thead>
-                    <tr><p class="title" style="margin: -0.4em; padding: 0em; max-width: 22em;">
-                    {% if language %}Add {{ language }} Keywords {% else %}Select Language {% endif %}{{ form_kwd_sv.language }}</p></tr>
-                    <tr style='vertical-align:top!important;'>
-                        <td style="color: #666666; font-weight:bold; font-size:13px;width:15%;">id</td>
-                        <td style="color: #666666; font-weight:bold; font-size:13px;width:65%;">Keywords</td>
-                        <td style="color: #666666; font-weight:bold; font-size:13px; margin-left:0px;">SV</td>
+                    <tr>
+                        <th scope="col" style="color: #666666; font-weight:bold; font-size:13px;width:20%;">ID</th>
+                        <th scope="col"style="color: #666666; font-weight:bold; font-size:13px;width:60%; ">Keywords</th>
+                        <th scope="col" style="color: #666666; font-weight:bold; font-size:13px;width:auto; ">SV</th>
                     </tr>
                 </thead>
-            </table>
-            <div class="tkw" >{{ formset.management_form }}
-            {% for form in formset %}
-            {{ form }}<br/>
-            {% endfor %}
-            </div>
+                <tbody>
+
+            {% if form_errors %}
+            <p style="color: red;">
+            Please, ensure that:<br/>
+                        language: <a style="font-size: small; color:blue"> This field is required.</a><br/>
+                        keyword: <a style="color:blue; font-size: small;">This field is required.</a><br/>
+                        sv:<a style="color:blue; font-size: small;"> Enter a whole number.</a>
+            </p>
+            {% endif %}
+                    {% for form in formset %}
+                    <tr id="{{ form.prefix }}-row" style="font-size:10px!important; padding-bottom: .05em!important;">
+                        <td style="pointer-events:none;">{{ form.kw_english }}</td>
+                        <td style="text-align:left;">{{ form.kw }}</td>
+                        <td style="text-align:left; width:20%;">{{ form.sv }}</td>
+                        <td style="text-align:left; visibility: hidden; width:0%;">{{ form.language }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                </table>
+            <p>{{ formset.management_form }}
         <input type="submit" name="trans_kw" value="Add translated" />
-        <input type="submit" name="clear_trans_kw" value="Clear"  />
+        <input type="submit" name="clear_trans_kw" value="Clear"  /></p>
         </div>
     </div>
 </div>
@@ -249,5 +253,7 @@ Keywords
 <p><input type="submit" name="kw_sv_sub" value="Add copied kw-sv" /></p>
 </div>
 </form>
+
+
 </body>
 </html>
