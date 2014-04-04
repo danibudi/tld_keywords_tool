@@ -33,10 +33,12 @@ class KwdSvForm(Form):
 class KeywordListForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(KeywordListForm, self).__init__(*args, **kwargs)
-        self.fields['sv'].widget.attrs = {'style': 'width:20%;'}
-        self.fields['kw'].widget.attrs = {'style': "width:auto;"}
+        self.fields['sv'].widget.attrs = {'style': 'width:99%'}
+        self.fields['kw'].widget.attrs = {'style': "width:30%"}
         self.fields['kw'].widget.attrs = {'placeholder': 'translated keyword'}
-        self.fields['kw_english'].widget.attrs = {'style': 'width:10%;'}
+        self.fields['kw_english'].widget.attrs = {
+            'style': 'width:99%; readonly: readonly; \
+            background-color: rgba(246, 235, 235, 1)'}
         self.fields['language'].widget.attrs = {'style': 'width:0%;'}
         self.fields['language'].widget.attrs = {'style': 'display: none;'}
         self.fields['language'].label = ''
@@ -48,10 +50,21 @@ class KeywordListForm(ModelForm):
         model = Kw_sv_language
         widgets = dict(
             kw_english=forms.TextInput(
-                attrs={'class': 'disabled', 'readonly': 'readonly',
-                       'style': 'width:100px;'}),
-            kw=forms.TextInput(attrs={'style': 'width:100px;'}),
+                attrs={"class": "disabled"}),
         )
+
+
+class KeywordDbForm(Form):
+    kw = forms.CharField(widget=forms.TextInput(
+        attrs={'class': 'disabled', 'readonly': 'readonly'}))
+    sv = forms.DecimalField(widget=forms.TextInput(
+        attrs={'class': 'disabled', 'readonly': 'readonly'}))
+    language = forms.CharField(widget=forms.TextInput(
+        attrs={'class': 'disabled', 'readonly': 'readonly'}))
+    kw_translated = forms.CharField(widget=forms.TextInput(
+        attrs={'class': 'disabled', 'readonly': 'readonly'}))
+    sv_translated = forms.DecimalField(widget=forms.TextInput(
+        attrs={'class': 'disabled', 'readonly': 'readonly'}))
 
 
 class KeywordTldForm(Form):

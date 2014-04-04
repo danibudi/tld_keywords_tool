@@ -1,5 +1,4 @@
 from django.conf.urls import patterns, include, url
-from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.conf.urls import *
 #~ import django.views.generic.simple.redirect_to
@@ -14,6 +13,10 @@ urlpatterns = patterns('',
     url(r'^$', 'kwt.views.grid', name='grid'),
     #~ url(r'^grid/$', 'kwt.views.grid', name='grif.html'),
     url(r'^home/$', 'kwt.views.home', name='home'),
+    url(r'^kw_db/$', 'kwt.views.kw_db', name='kw_db'),
+    url(r'^kw_english/(?P<kw_english>[-\w]+)/$', 'kwt.views.kw_db1', name='kw_db1'),
+    #~ url(r'^kw_english/(?P<kw_english>[-\w]+)/$', 'kwt.views.all_json_models', name='kw_db1'),
+    #~ url(r'^home/(?P<name>\d{4})/$', 'year_archive', {'name': request.session.name}),
     # url(r'^{{ project_name }}/', include('{{ project_name }}.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:

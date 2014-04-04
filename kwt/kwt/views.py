@@ -2,7 +2,7 @@ from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_exempt
 from django.template.context import RequestContext
 from models import Keyword, Tld, Kw_sv_language, Language
-from forms import LanguageForm, KwdSvForm, KeywordListForm
+from forms import LanguageForm, KwdSvForm, KeywordListForm, KeywordDbForm
 from namecheap_api import namecheap_domains_check, parser_data
 from django.forms.formsets import formset_factory
 
@@ -104,7 +104,7 @@ def home(request):
         kwords_untranslated = kw_sort(language=language, method='sv_english')
     return render_to_response(
         'st.html',
-        dict(language=language, kw_sv_dict=kw_sv_dict, form_errors = form_errors,
+        dict(language=language, kw_sv_dict=kw_sv_dict, form_errors=form_errors,
              kw_language=kw_language, form_kwd_sv=form_kwd_sv,
              formset=formset, kwords_all=kwords_untranslated),
         context_instance=RequestContext(request))
@@ -152,4 +152,25 @@ def grid(request):
         'grid.html', dict(
             domains=None, namecheap_domains=namecheap_domains,
             form_lang=form_lang,
+            context_instance=RequestContext(request)))
+
+
+@csrf_exempt
+def kw_db(request):
+    kw = Keyword.objects.all().order_by('kw_english')
+    form = KeywordDbForm(request.POST)
+
+    return render_to_response(
+        'kw_db.html', dict(
+            form=form, kw=kw,
+            context_instance=RequestContext(request)))
+
+
+@csrf_exempt
+def kw_db1(request, kw_english):
+    current_kw = Keyword.objects.get(id=kw_english)
+    tr_kw = Kw_sv_language.objects.all().filter(kw_english=current_kw)
+    return render_to_response(
+        'kw_db1.html', dict(
+            current_kw=current_kw, tr_kw=tr_kw,
             context_instance=RequestContext(request)))
