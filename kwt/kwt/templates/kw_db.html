@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<?xml version="1.0" encoding="utf-8"?>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<html xmlns="http://www.w3.org/1999/xhtml">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script><head>
+
+
+<style>
+.right
+{
+position:absolute;
+right:50px;
+background-color:#b0e0e6;
+}
+
+iframe.noScrolling{
+           width:20em; /*or any other size*/
+           height: 15em; /*or any other size*/
+           overflow-x: hidden;
+           overflow-y: visible;
+        }
+</style>
+
+    <title style="color: blue;">
+        Keyword Datebase
+    </title>
+</head>
+
+<body style="background-image:url('/static/bground-pattern.jpg') ">
+<script>
+    function myFunction(pk) {
+        alert(pk);
+        var el = document.createElement("iframe");
+        if (pk) {
+            el.setAttribute('name', 'ifrm');
+            document.body.appendChild(el);
+            el.setAttribute('src', pk);
+    }
+    return false;
+}
+</script>
+<div id="content">
+<h2 style="color: blue;">
+ Keyword Datebase
+</h2>
+{% load lower %}
+ <table style="text-align:left; width: 30em; float:left">
+        <thead>
+            <tr>
+                <th scope="col"style="color: #666666; font-weight:bold; font-size:13px;width:60%; ">Keyword</th>
+                <th scope="col" style="color: #666666; font-weight:bold; font-size:13px;width:auto; ">SV</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% load lower %}
+        {% for k in kw %}
+        <tr>
+            <td style="width:30%;">
+                <a href="{% url "kw_db1" k.pk %}" onclick="myFunction('{% url "kw_db1" k.pk %}')" target="{{ k.pk }}">{{ k.kw_english|lower }}</a>
+            </td>
+            <td style="text-align:left; width:20%;"> {{ k.sv_english }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+ <p>
+    <iframe name="translated" class="noScrolling" >
+    </iframe>
+ </p>
+</div>

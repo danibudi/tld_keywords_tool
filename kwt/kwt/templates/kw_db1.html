@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<?xml version="1.0" encoding="utf-8"?>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<html xmlns="http://www.w3.org/1999/xhtml">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<head>
+<style>
+.right
+{
+position:absolute;
+right:50px;
+_width:300px;
+background-color:#b0e0e6;
+}
+</style>
+
+<title style="color: blue;">
+    Keyword DB
+</title>
+</head>
+
+<body style="background-image:url('/static/bground-pattern.jpg') ">
+<script>
+</script>
+<div id="content">
+<h3 style="color: blue;">
+English keyword - {{  current_kw }}
+</h3>
+{% load lower %}
+    <table style="text-align:left;">
+        <thead>
+            <tr>
+                <th scope="col" style="color: #666666; font-weight:bold; font-size:13px;width:20%;">Language</th>
+                <th scope="col"style="color: #666666; font-weight:bold; font-size:13px;width:60%; ">Keyword</th>
+                <th scope="col" style="color: #666666; font-weight:bold; font-size:13px;width:auto; ">SV</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% load lower %}
+        {% for k in tr_kw %}
+        <tr>
+            <td style="pointer-events:none;width:30%;">{{ k.language }}: </td>
+            <td style="text-align:left;">{{ k.kw|lower }}</td>
+            <td style="text-align:left; width:20%;"> {{ k.sv }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+</div>
