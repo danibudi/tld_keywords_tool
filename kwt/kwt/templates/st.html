@@ -11,17 +11,16 @@
 {
 overflow:auto;
 background-color: #b0e0e6;
-box-shadow: 0px 0px 0.5em #97CBF4;
-max-height:40em;
+box-shadow: 0em 0em 0.5em #97CBF4;
 vertical-align:top!important;
 width: 25em;
 }
 .title{
     color: blue;
-    font-size:18px;
+    font-size:larger;
     font-weight:bold;
     text-align:center;
-    margin-left:90px;
+    margin-left:5em;
 }
 .errorlist {
    font-size: small!important;
@@ -33,15 +32,14 @@ ul.errorlist {
    text-align: left;
 }
 .table_kw {
-    _width: 100px;
-    margin: 20px auto;
+    margin: 2em auto;
     border-collapse:collapse;
     border-spacing: 0;
 }
 .table_kw td {
     background-color: red;
     border: 0;
-    min-height: 20px;
+    min-height: 2em;
 }
 .textarea {
     border: none;
@@ -86,6 +84,9 @@ ul.errorlist {
     -webkit-align-items: flex-start;
     -ms-flex-align: start;
     align-items: flex-start;
+    overflow:auto;
+    max-height:40em;
+    width: 55em!important;
 }
 
 .flex-item:{
@@ -111,21 +112,20 @@ ul.errorlist {
 
 @-moz-document url-prefix() {
 .flex-container {
-    width: 100%;
+    width: auto;
     -moz-box-sizing: border-box;
     }
 }
 
 .table_data {
     background-color:white;
-    padding-bottom: 0.25em;
-    padding-top: 0.21em;
+    height: 1.5em;
 }
 
 .table_header {
     color: #666666;
     font-weight:bold;
-    font-size:13px;
+    font-size:medium;
 }
 
 .headerSortDown {
@@ -135,6 +135,14 @@ ul.errorlist {
 .headerSortUp {
   background-image: url("http://i.imgur.com/SP99ZPJ.png");
   background-repeat:no-repeat;
+}
+input:focus
+{
+background-color:#FFFF99;
+}
+
+textarea:focus {
+    background: #FFFF99;
 }
 </style>
 <script type="text/javascript" src="{{ STATIC_URL }}jquery-latest.js"></script>
@@ -146,6 +154,13 @@ $(document).ready(function()
         $("#TranslatedTable").tablesorter();
     }
 );
+
+function clr()
+{
+    var ta = document.getElementById("id_kw_sv_sub-kwd_sv");
+    ta.value = "";
+    ta.focus();
+}
 </script>
 <script>
 function get_submit_button() {
@@ -177,18 +192,18 @@ Keywords
 
 <div class="flex-container" id="content">
     <div class="flex-item">
-        <div class="tkw" ><span class="title">English Keywords</span>
-        <table id="KeywordsTable" class="tablesorter" style='vertical-align:top!important;'>
+        <div class="tkw"><span class="title" style="margin-bottom: 2em;">English Keywords</span>
+        <table id="KeywordsTable" class="tablesorter" style="width:24.8em; vertical-align:top!important; margin-top: 1.1em;">
             <thead>
-            <tr>
+            <tr >
             <th class="table_header" style="width:10%;">ID</a></th>
-            <th class="table_header" style="width:40%;">Keywords</th>
+            <th class="table_header" style="width:auto">Keywords</th>
             <th class="table_header" style="width:50%;">SV</th>
             </tr>
             </thead>
             <tbody>
                 {% for kw in kwords_all %}
-                <tr width=100%>
+                <tr style="height:1.68em!important;"width=100%>
                     <td class="table_data" style="width:10%;">{{ kw.id }}</td>
                     <td class="table_data" style="width:78%;">{{ kw.kw_english.lower }}</td>
                     <td class="table_data" style="width:auto;">{{ kw.sv_english }}</td>
@@ -199,13 +214,12 @@ Keywords
         </div>
     </div>
     <div class="flex-item" style="margin-left: 4em; ">
-        <div class="tkw" name="lang_sub" id="kwordslist" style="overflow-x:hidden!important">
-            <input type="submit" name="lang_sub" value="Set language" style="visibility: hidden; height: 0em"/>
-
-            <p class="title" style="margin: -0.4em; padding: 0em; max-width: 24em;">
+        <div class="tkw" name="lang_sub" id="kwordslist">
+            <span class="title" style="margin-left: 2em;">
                 {% if language %}Add {{ language }} Keywords {% else %}Select Language {% endif %}{{ form_kwd_sv.language }}
-            </p>
-            <table id="TranslatedTable" class="tablesorter" style="font-size:10px!important; padding-bottom: .05em!important;">
+            </span>
+            <input type="submit" name="lang_sub" value="Set language" style="display: none;"/>
+            <table id="TranslatedTable" style="margin-top: 1em;">
                 <thead>
                     <tr>
                         <th class="table_header" scope="col" style="width:20%;">ID</th>
@@ -214,16 +228,16 @@ Keywords
                     </tr>
                 </thead>
                 <tbody>
-            {% if form_errors %}
-            <p style="color: red;">
-            Please, ensure that:<br/>
-                        language: <a style="font-size: small; color:blue"> This field is required.</a><br/>
-                        keyword: <a style="color:blue; font-size: small;">This field is required.</a><br/>
-                        sv:<a style="color:blue; font-size: small;"> Enter a whole number.</a>
-            </p>
-            {% endif %}
+                    {% if form_errors %}
+                    <p style="color: red;">
+                    Please, ensure that:<br/>
+                                language: <a style="font-size: small; color:blue"> This field is required.</a><br/>
+                                keyword: <a style="color:blue; font-size: small;">This field is required.</a><br/>
+                                sv:<a style="color:blue; font-size: small;"> Enter a whole number.</a>
+                    </p>
+                    {% endif %}
                     {% for form in formset %}
-                    <tr id="{{ form.prefix }}-row" style="font-size:10px!important; padding-bottom: .05em!important;">
+                    <tr id="{{ form.prefix }}-row" style="height: 1.2em!important;">
                         <td style="pointer-events:none;">{{ form.kw_english }}</td>
                         <td style="text-align:left;">{{ form.kw }}</td>
                         <td style="text-align:left; width:20%;">{{ form.sv }}</td>
@@ -246,12 +260,12 @@ Keywords
     Please correct the error below.</p>
     <p style="font-size: small!important; color: red; text-align: left;"> {{ form_kwd_sv.errors }}</p>
 {% endif %}
-{{ form_kwd_sv.kwd_sv }}</div>
+{{ form_kwd_sv.kwd_sv }}
+</div>
 <p class="helptext">200 characters max.</p>
-<p><input type="submit" name="kw_sv_sub" value="Add copied kw-sv" /></p>
+<p><input type="submit" name="kw_sv_sub" value="Add copied kw-sv" />
+    <input type="submit" name="kw_sv_clean" value="Clean" onclick="clr()" /></p>
 </div>
 </form>
-
-
 </body>
 </html>

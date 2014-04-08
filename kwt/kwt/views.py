@@ -68,9 +68,13 @@ def home(request):
                 formset = KeywordListFormSet(data=request.POST,
                                              prefix='trans_kw')
             if 'clear_trans_kw' in request.POST:
+                if language:
+                    language=language.id
+                else:
+                    language=None
                 x_post = [dict(
                     kw_english=kw,
-                    language=language.id) for kw in kwords_untranslated]
+                    language=language) for kw in kwords_untranslated]
                 formset = KeywordListFormSet(initial=x_post, prefix='trans_kw')
             if 'trans_kw' in request.POST:
                 for form_kw_lang in formset:
