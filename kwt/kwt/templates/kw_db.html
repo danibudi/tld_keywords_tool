@@ -14,12 +14,37 @@ right:50px;
 background-color:#b0e0e6;
 }
 
+#clickme tr.clicked { background: #ff0; }
 iframe.noScrolling{
            width:20em; /*or any other size*/
            height: 15em; /*or any other size*/
            overflow-x: hidden;
            overflow-y: visible;
         }
+
+.table_th {
+    color: #00F;
+    font-weight:bold;
+    font-size:13px;
+    width:auto;
+    padding: .3em;
+    border: 1px #ccc solid;
+}
+.clickon {
+    background-color: #B0E0E6;
+    box-shadow: 0px 0px 0.5em #97CBF4;
+    text-align:left;
+    width: auto;
+    float:left;
+    margin: 1em;
+}
+
+#clicable:hover
+{
+background-color:yellow;
+color:red;
+}
+
 </style>
 
     <title style="color: blue;">
@@ -29,43 +54,73 @@ iframe.noScrolling{
 
 <body style="background-image:url('/static/bground-pattern.jpg') ">
 <script>
-    function myFunction(pk) {
-        alert(pk);
-        var el = document.createElement("iframe");
-        if (pk) {
-            el.setAttribute('name', 'ifrm');
-            document.body.appendChild(el);
-            el.setAttribute('src', pk);
+function tableHighlightRow() {
+  if (document.getElementById && document.createTextNode) {
+    var tables=document.getElementsByTagName('table');
+    for (var i=0;i<tables.length;i++)
+    {
+      if(tables[i].className=='clickme') {
+        var trs=tables[i].getElementsByTagName('tr');
+        for(var j=0;j<trs.length;j++){
+          if(trs[j].parentNode.nodeName=='TBODY') {
+            trs[j].onclick=function(){this.className='clicked';return false}
+            trs[j].ondblclick=function(){this.className='';return false}
+          }
+        }
+      }
     }
-    return false;
+  }
+}
+window.onload=function(){tableHighlightRow();}
+
+function myFunction1(pk) {
+    var el = document.getElementById(pk);
+    el.style.display = 'block';
 }
 </script>
 <div id="content">
-<h2 style="color: blue;">
+<h2 style="color: blue; padding-left: 1em;">
  Keyword Datebase
-</h2>
-{% load lower %}
- <table style="text-align:left; width: 30em; float:left">
-        <thead>
+</h2>{% load lower %}
+ <table class="clickon" id="clickme">
+        <thead  style="background: #97CBF4; ">
             <tr>
-                <th scope="col"style="color: #666666; font-weight:bold; font-size:13px;width:60%; ">Keyword</th>
-                <th scope="col" style="color: #666666; font-weight:bold; font-size:13px;width:auto; ">SV</th>
+                <th scope="col" class="table_th">Keyword</th>
+                <th scope="col" class="table_th">SV</th>
+                <th scope="col" class="table_th">Translated</th>
             </tr>
         </thead>
-        <tbody>
-        {% load lower %}
+        <tbody style="background: #9cf; ">
         {% for k in kw %}
         <tr>
             <td style="width:30%;">
-                <a href="{% url "kw_db1" k.pk %}" onclick="myFunction('{% url "kw_db1" k.pk %}')" target="{{ k.pk }}">{{ k.kw_english|lower }}</a>
+                {% if k.kw_sv_language_set.all %}
+                    <a id='clicable' style="font-size: medium;" onclick="myFunction1({{ k.pk }})">
+                        {{ k.kw_english|lower }}
+                    </a>
+                {% else %}
+                   <a style="font-size: medium; color: darkblue;">{{ k.kw_english|lower }}</a>
+                {% endif %}
             </td>
             <td style="text-align:left; width:20%;"> {{ k.sv_english }}</td>
-        </tr>
+            <td>
+                {% if k.kw_sv_language_set.all %}
+                <table id={{ k.pk }} style="display: none;">
+                    <tbody>
+                    {% for kwl in k.kw_sv_language_set.all %}
+                    <tr>
+                        <td style="color: darkblue; padding-right: 1em; width:30%;">{{ kwl.language }}: </td>
+                        <td style="text-align:left;">{{ kwl.kw|lower }}</td>
+                        <td style="text-align:left; width:20%;"> {{ kwl.sv }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                    <a style="font-size: small; color: blue;">None</a>
+                {% endif %}
+            </td>
         {% endfor %}
-        </tbody>
+        </tbody> </td>
     </table>
- <p>
-    <iframe name="translated" class="noScrolling" >
-    </iframe>
- </p>
 </div>

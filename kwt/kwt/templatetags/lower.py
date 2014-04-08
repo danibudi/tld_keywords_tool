@@ -1,7 +1,6 @@
-#templatetags.py
 from django import template
 from django.template.defaultfilters import stringfilter
-from models import Keyword, Kw_sv_language
+#~ from ..models import Keyword, Kw_sv_language
 
 register = template.Library()
 

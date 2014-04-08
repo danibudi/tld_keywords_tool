@@ -44,7 +44,7 @@ def home(request):
                 for k, v in kw_sv_dict.items():
                     try:
                         kw, created = Keyword.objects.get_or_create(
-                            kw_english=str(k))
+                            kw_english=str(k).lower())
                         kw.sv_english = int(v)
                         kw.save()
                     except:
@@ -96,12 +96,6 @@ def home(request):
         KeywordListFormSet = formset_factory(KeywordListForm, extra=0)
         x_post = [dict(kw_english=kw) for kw in kwords_untranslated]
         formset = KeywordListFormSet(initial=x_post, prefix='trans_kw')
-    if request.GET.get('sort') == "id" or not 'sort' in request.GET:
-        kwords_untranslated = kw_sort(language=language)
-    if request.GET.get('sort') == "alphabetic":
-        kwords_untranslated = kw_sort(language=language, method='kw_english')
-    if request.GET.get('sort') == 'descend':
-        kwords_untranslated = kw_sort(language=language, method='sv_english')
     return render_to_response(
         'st.html',
         dict(language=language, kw_sv_dict=kw_sv_dict, form_errors=form_errors,
@@ -159,7 +153,6 @@ def grid(request):
 def kw_db(request):
     kw = Keyword.objects.all().order_by('kw_english')
     form = KeywordDbForm(request.POST)
-
     return render_to_response(
         'kw_db.html', dict(
             form=form, kw=kw,

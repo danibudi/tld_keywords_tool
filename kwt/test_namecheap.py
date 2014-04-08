@@ -15,7 +15,7 @@ class TestApi(unittest.TestCase):
         self.assertEquals(domains_status,
                           {'google.com': False,  # 'vintech.com': 'false',
                            'availabledomain.com': False, u'раббота.com': True,
-                           u'труд.com': True, 'alabaladomain.com': True})
+                           u'труд.com': False, 'alabaladomain.com': True})
         domains_status, err = namecheap_domains_check()
         self.assertEquals(domains_status, {})
         domains_status, err = namecheap_domains_check('dummy')

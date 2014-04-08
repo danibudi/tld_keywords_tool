@@ -57,26 +57,6 @@ ul.errorlist {
     color: green;
 }
 
-var editable = document.getElementById('editable');
-addEvent(editable, 'blur', function () {
-  // lame that we're hooking the blur event
-  localStorage.setItem('contenteditable', this.innerHTML);
-  document.designMode = 'off';
-});
-
-addEvent(editable, 'focus', function () {
-  document.designMode = 'on';
-});
-
-addEvent(document.getElementById('clear'), 'click', function () {
-  localStorage.clear();
-  window.location = window.location; // refresh
-});
-
-if (localStorage.getItem('contenteditable')) {
-  editable.innerHTML = localStorage.getItem('contenteditable');
-}
-
 .flex-container {
     display: -webkit-box;
     display: -moz-box;
@@ -134,7 +114,27 @@ if (localStorage.getItem('contenteditable')) {
     width: 100%;
     -moz-box-sizing: border-box;
     }
+}
 
+.table_data {
+    background-color:white;
+    padding-bottom: 0.25em;
+    padding-top: 0.21em;
+}
+
+.table_header {
+    color: #666666;
+    font-weight:bold;
+    font-size:13px;
+}
+
+.headerSortDown {
+  background-image: url("http://i.imgur.com/RkA9MBo.png");
+  background-repeat:no-repeat;
+}
+.headerSortUp {
+  background-image: url("http://i.imgur.com/SP99ZPJ.png");
+  background-repeat:no-repeat;
 }
 </style>
 <script type="text/javascript" src="{{ STATIC_URL }}jquery-latest.js"></script>
@@ -142,7 +142,7 @@ if (localStorage.getItem('contenteditable')) {
 <script>
 $(document).ready(function()
     {
-        $("#myTable").tablesorter();
+        $("#KeywordsTable").tablesorter();
         $("#TranslatedTable").tablesorter();
     }
 );
@@ -178,21 +178,20 @@ Keywords
 <div class="flex-container" id="content">
     <div class="flex-item">
         <div class="tkw" ><span class="title">English Keywords</span>
-        <table id="myTable" class="tablesorter" style='vertical-align:top!important;'>
+        <table id="KeywordsTable" class="tablesorter" style='vertical-align:top!important;'>
             <thead>
             <tr>
-            <th style="color: #666666; font-weight:bold; font-size:13px;width:10%; ">ID</a></th>
-            <th style="color: #666666; font-weight:bold; font-size:13px;width:40%; ">Keywords</th>
-            <th style="color: #666666; font-weight:bold; font-size:13px;width:50%; ">SV</th>
+            <th class="table_header" style="width:10%;">ID</a></th>
+            <th class="table_header" style="width:40%;">Keywords</th>
+            <th class="table_header" style="width:50%;">SV</th>
             </tr>
             </thead>
-
             <tbody>
                 {% for kw in kwords_all %}
-                <tr  width=100%>
-                    <td style="background-color:white; width:10%;padding-bottom: 0.25em;padding-top: 0.21em;">{{ kw.id }}</td>
-                    <td style="background-color:white; width:78%;padding-bottom: 0.25em;padding-top: 0.21em;">{{ kw.kw_english }}</td>
-                    <td style="background-color:white; width:auto;padding-bottom: 0.25em;padding-top: 0.21em;">{{ kw.sv_english }}</td>
+                <tr width=100%>
+                    <td class="table_data" style="width:10%;">{{ kw.id }}</td>
+                    <td class="table_data" style="width:78%;">{{ kw.kw_english.lower }}</td>
+                    <td class="table_data" style="width:auto;">{{ kw.sv_english }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -209,13 +208,12 @@ Keywords
             <table id="TranslatedTable" class="tablesorter" style="font-size:10px!important; padding-bottom: .05em!important;">
                 <thead>
                     <tr>
-                        <th scope="col" style="color: #666666; font-weight:bold; font-size:13px;width:20%;">ID</th>
-                        <th scope="col"style="color: #666666; font-weight:bold; font-size:13px;width:60%; ">Keywords</th>
-                        <th scope="col" style="color: #666666; font-weight:bold; font-size:13px;width:auto; ">SV</th>
+                        <th class="table_header" scope="col" style="width:20%;">ID</th>
+                        <th class="table_header" scope="col"style="width:60%;">Keywords</th>
+                        <th class="table_header" scope="col" style="width:auto;">SV</th>
                     </tr>
                 </thead>
                 <tbody>
-
             {% if form_errors %}
             <p style="color: red;">
             Please, ensure that:<br/>

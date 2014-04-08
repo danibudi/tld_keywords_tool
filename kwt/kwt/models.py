@@ -8,12 +8,18 @@ class Keyword(models.Model):
     def __unicode__(self):
         return  u'%s' % (self.kw_english)
 
+    def clean(self):
+        self.kw_english = self.kw_english.lower()
+
 
 class Tld(models.Model):
     domain = models.CharField(max_length=200, unique=True)
 
     def __unicode__(self):
         return  u'%s' % (self.domain)
+
+    def clean(self):
+        self.domain = self.domain.lower()
 
 
 class Language(models.Model):
@@ -27,10 +33,13 @@ class Kw_sv_language(models.Model):
     kw_english = models.ForeignKey(Keyword, verbose_name="keyword in English")
     language = models.ForeignKey(Language)
     kw = models.CharField("keyword", max_length=200)
-    sv = models.PositiveIntegerField('search volume', default=0)
+    sv = models.PositiveIntegerField('search volume', default=1)
 
     def __unicode__(self):
         return  u'%s' % (self.kw)
+
+    def clean(self):
+        self.kw = self.kw.lower()
 
     class Meta:
         unique_together = ("language", "kw")
