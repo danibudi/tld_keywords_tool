@@ -5,7 +5,8 @@ import xml.etree.ElementTree as ET
 
 from settings import (api_key, api_user, command, user_name, clientIp, url,
                       amount_of_domains_checked_in_one_API_call,
-                      length_of_URL_limited_to)
+                      #~ length_of_URL_limited_to
+                      )
 
 
 def parser_data(text=""):
@@ -57,10 +58,7 @@ def namecheap_domains_check(domain_list=[]):
         domains = ','.join(i for i in elements_for_namecheap)
         data['DomainList'] = domains
         url_values = urllib.urlencode(data)
-        full_url = url + '?' + url_values
-        if len(full_url) >= length_of_URL_limited_to:
-            return (domains_status, "too long url")
-        data_url = urllib2.urlopen(full_url)
+        data_url = urllib2.urlopen(url, url_values)
         the_page = data_url.read()
         root = ET.fromstring(the_page)
         if root.iter('Errors'):

@@ -209,7 +209,7 @@ Keywords
         <div class="tkw"><span class="title" style="margin-bottom: 2em;">English Keywords</span>
         <table id="KeywordsTable" class="tablesorter" style="width:24.8em; vertical-align:top!important; margin-top: 1.1em;">
             <thead>
-            <tr >
+            <tr>
             <th class="table_header" style="width:10%;">ID</a></th>
             <th class="table_header" style="width:auto">Keywords</th>
             <th class="table_header" style="width:50%;">SV</th>
@@ -217,7 +217,7 @@ Keywords
             </thead>
             <tbody>
                 {% for kw in kwords_all %}
-                <tr style="height:1.68em!important;"width=100%>
+                <tr style="height:2em!important;"width=100%>
                     <td class="table_data" style="width:10%;">{{ kw.id }}</td>
                     <td class="table_data" style="width:78%;">{{ kw.kw_english.lower }}</td>
                     <td class="table_data" style="width:auto;">{{ kw.sv_english }}</td>
@@ -251,7 +251,7 @@ Keywords
                     </p>
                     {% endif %}
                     {% for form in formset %}
-                    <tr id="{{ form.prefix }}-row" style="height: 1.2em!important;">
+                    <tr id="{{ form.prefix }}-row" style="height: 2em!important;">
                         <td style="pointer-events:none;">{{ form.kw_english }}</td>
                         <td style="text-align:left;">{{ form.kw }}</td>
                         <td style="text-align:left; width:20%;">{{ form.sv }}</td>

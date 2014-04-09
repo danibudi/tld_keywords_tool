@@ -1,0 +1,40 @@
+{% block navigate %}
+   <div>
+        <a href="/home/"  class="button">Add Keywords</a>
+        <span><a href="/"  class="button">Lookup free domains</a></span>
+        <span><a href="/kw_db/"  class="button" style="">View KW Datebase</a></span>
+        <span><a href="/admin/"  class="button" style="">Admin</a></span>
+    </div><br/>
+{% endblock %}
+
+{% block extracss %}
+<style>
+.button {
+display: block;
+float: left;
+margin-right: 1em;
+height: 1em;
+background: #4E9CAF;
+padding: 0.5em;
+text-align: center;
+border-radius: 5px;
+color: white;
+font-weight: bold;
+}
+#content > div:nth-child(1):hover
+{
+color:blue;
+}
+
+.helptext {
+    font-size: small;
+    font-style: italic;
+    color: green;
+}
+.errorlist > li:nth-child(1) {
+    font-size: small;
+    font-style: italic;
+    color: red;
+}
+</style>
+{% endblock %}
