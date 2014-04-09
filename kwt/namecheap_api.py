@@ -4,7 +4,8 @@ import urllib2
 import xml.etree.ElementTree as ET
 
 from settings import (api_key, api_user, command, user_name, clientIp, url,
-                      amount_of_domains_checked_in_one_API_call)
+                      amount_of_domains_checked_in_one_API_call,
+                      length_of_URL_limited_to)
 
 
 def parser_data(text=""):
@@ -44,19 +45,27 @@ def namecheap_domains_check(domain_list=[]):
     data['ApiKey'] = api_key
     data['Command'] = command
     data['ClientIp'] = clientIp
-    domainList = [dom.encode('idna') for dom in domain_list]
+    try:
+        domainList = [dom.encode('idna') for dom in domain_list]
+    except:
+        err = UnicodeError("label empty or too long")
+        return domains_status, err
     max_amount_domains = amount_of_domains_checked_in_one_API_call
     for i, d in enumerate(range(len(domainList)/max_amount_domains+1)):
-        elements_for_namecheap = domainList[i*max_amount_domains:(d+1)*max_amount_domains]
+        elements_for_namecheap = domainList[
+            i*max_amount_domains:(d+1)*max_amount_domains]
         domains = ','.join(i for i in elements_for_namecheap)
         data['DomainList'] = domains
         url_values = urllib.urlencode(data)
         full_url = url + '?' + url_values
+        if len(full_url) >= length_of_URL_limited_to:
+            return (domains_status, "too long url")
         data_url = urllib2.urlopen(full_url)
         the_page = data_url.read()
         root = ET.fromstring(the_page)
         if root.iter('Errors'):
-            for e in root.iter('{http://api.namecheap.com/xml.response}Error'):
+            for e in root.iter(
+                '{http://api.namecheap.com/xml.response}Error'):
                 try:
                     err = err + e.text + '; '  # .split("Provider for tld '")[1][:3].strip("'")
                 except:

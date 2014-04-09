@@ -14,8 +14,13 @@ right:50px;
 _width:300px;
 background-color:#b0e0e6;
 }
+#content > div:nth-child(1) :hover
+{
+color:blue;
+}
 </style>
-
+{% block extracss %}
+{% endblock %}
     <title>
         Keywords
     </title>
@@ -59,13 +64,16 @@ function clr()
     ta.value = "";
 }
 </script>
-<div id="content" style='_width:60%'>
-<h1>
+<div id="content" style='width:80%'>
+{% block navigate %}
+{% include "navigation.html" %}
+{% endblock %}
+<h1 style="color:#4E9CAF; margin-top: 2em;">
 Available domains
 </h1>
     <form name="form_lang" action="" method="post">{% csrf_token %}
     {{ form_lang.management_form }}
-    {{ form_lang.as_ul }}
+    {{ form_lang.as_p }}
     <input type="submit" value="Show available Domains" />
     </form>
     <br clear=' left'/>

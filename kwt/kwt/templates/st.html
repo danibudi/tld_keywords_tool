@@ -84,6 +84,7 @@ ul.errorlist {
     -webkit-align-items: flex-start;
     -ms-flex-align: start;
     align-items: flex-start;
+    margin-top: 1em;
     overflow:auto;
     max-height:40em;
     width: 55em!important;
@@ -144,7 +145,16 @@ background-color:#FFFF99;
 textarea:focus {
     background: #FFFF99;
 }
+#hh :hover
+{
+color:blue;
+}
+#content > div:nth-child(1):hover
+{
+color:black!important;
+}
 </style>
+
 <script type="text/javascript" src="{{ STATIC_URL }}jquery-latest.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}jquery.tablesorter.js/"></script>
 <script>
@@ -188,9 +198,13 @@ Keywords
 </head>
 
 <body style="background-image:url('/static/bground-pattern.jpg');">
+<div id='hh'> {% block navigate %}
+{% include "navigation.html" %}
+{% endblock %}<br/></div>
 <form action="" name="kw_sv_sub" method="post">{% csrf_token %}
 
 <div class="flex-container" id="content">
+
     <div class="flex-item">
         <div class="tkw"><span class="title" style="margin-bottom: 2em;">English Keywords</span>
         <table id="KeywordsTable" class="tablesorter" style="width:24.8em; vertical-align:top!important; margin-top: 1.1em;">

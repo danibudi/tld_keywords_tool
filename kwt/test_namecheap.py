@@ -22,11 +22,12 @@ class TestApi(unittest.TestCase):
         domains_status, err = namecheap_domains_check(
             domain_list=domains*10 + ['conzap.com'])
 
-        self.assertEquals(domains_status,
-                          {'google.com': False, 'conzap.com': False,
-                           u'раббота.com': True,
-                           'availabledomain.com': False,
-                           u'труд.com': False, 'alabaladomain.com': True})
+    def test_get_HTTPResponce_over_NC_limit2048(self):
+        domains_status, err = namecheap_domains_check(
+            domain_list=[1000*'conzap'+'.com'])
+        expected_error = UnicodeError('label empty or too long',)
+        self.assertEquals(domains_status, {})
+        self.assertRaises(expected_error)
 
     def test_get_HTTPResponce_no_domain_list(self):
         domains_status, err = namecheap_domains_check()

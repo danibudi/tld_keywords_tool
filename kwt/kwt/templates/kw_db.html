@@ -45,11 +45,25 @@ background-color:yellow;
 color:red;
 }
 
+#content > div:nth-child(1) > span:nth-child(3) > a:nth-child(1):hover
+{
+color:blue;
+}
+#content > div:nth-child(1) > :hover
+{
+color:blue;
+}
+#content > div:nth-child(1) > span:nth-child(2) > a:nth-child(1):hover
+{
+color:blue;
+}
 </style>
+{% block extracss %}
+{% endblock %}
 
-    <title style="color: blue;">
-        Keyword Datebase
-    </title>
+<title style="color: blue;">
+    Keyword Datebase
+</title>
 </head>
 
 <body style="background-image:url('/static/bground-pattern.jpg') ">
@@ -79,6 +93,9 @@ function myFunction1(pk) {
 }
 </script>
 <div id="content">
+{% block navigate %}
+{% include "navigation.html" %}
+{% endblock %}<br/>
 <h2 style="color: blue; padding-left: 1em;">
  Keyword Datebase
 </h2>{% load lower %}
@@ -90,7 +107,7 @@ function myFunction1(pk) {
                 <th scope="col" class="table_th">Translated</th>
             </tr>
         </thead>
-        <tbody style="background: #9cf; ">
+        <tbody style="background: #9cf;">
         {% for k in kw %}
         <tr>
             <td style="width:30%;">
