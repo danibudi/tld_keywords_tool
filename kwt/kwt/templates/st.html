@@ -243,12 +243,13 @@ Keywords
                 </thead>
                 <tbody>
                     {% if form_errors %}
-                    <p style="color: red;">
-                    Please, ensure that:<br/>
-                                language: <a style="font-size: small; color:blue"> This field is required.</a><br/>
-                                keyword: <a style="color:blue; font-size: small;">This field is required.</a><br/>
-                                sv:<a style="color:blue; font-size: small;"> Enter a whole number.</a>
-                    </p>
+                        {% if not language %}
+                            <p style="color: #F00;">Please select a language.</p>
+                        {% else %}
+                            {% for i in form_errors %}
+                            {{ i }}
+                            {% endfor %}
+                        {% endif %}
                     {% endif %}
                     {% for form in formset %}
                     <tr id="{{ form.prefix }}-row" style="height: 2em!important;">
@@ -272,7 +273,7 @@ Keywords
 {% if form_kwd_sv.errors %}
     <p style="color: red; font-size: small; text-align: left;">
     Please correct the error below.</p>
-    <p style="font-size: small!important; color: red; text-align: left;"> {{ form_kwd_sv.errors }}</p>
+    <p style="font-size: small!important; color: red; text-align: left;">{{ form_kwd_sv.errors }}</p>
 {% endif %}
 {{ form_kwd_sv.kwd_sv }}
 </div>

@@ -40,6 +40,7 @@ class Kw_sv_language(models.Model):
 
     def clean(self):
         self.kw = self.kw.lower()
+        self.kw = self.kw.strip().split(' ')[0]
 
     class Meta:
         unique_together = ("language", "kw")

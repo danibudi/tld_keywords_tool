@@ -67,6 +67,7 @@ function clr()
 <div id="content" style='width:80%'>
 {% block navigate %}
 {% include "navigation.html" %}
+<p style='color:red'>Please, check the internet connection {{ exception_error }}</p>
 {% endblock %}
 <h1 style="color:#4E9CAF; margin-top: 2em;">
 Available domains
@@ -85,14 +86,8 @@ Available domains
         {% for tld, b, nn in t %}
             <td>
             {% if b %}
-                <input id="id_agree_{{nn}}" type="checkbox" name="agree" checked></input>
+                <input id="id_agree_{{nn}}" type="checkbox" name="agree" ></input>
                 <label id="terms" class="vCheckboxLabel" for="id_agree" style="font-size:12px; display: inline-table;padding-top:4px;margin: 0px; margin-right: 8px;" >
-                    {{ tld }}
-                </label>
-            {% else %}
-                {% if b == None %} <span style="color:red;font-size:12px;">na</span>{% endif %}
-                <label id="terms" class="vCheckboxLabel" for="id_agree_{{nn}}" style="color:gray; font-size:12px; display: inline-table;padding-top:4px;
-                {% if b == None %}margin-left: 0px;{% else %}margin-left: 26px;{% endif %} margin-right: 8px;" >
                     {{ tld }}
                 </label>
             {% endif %}

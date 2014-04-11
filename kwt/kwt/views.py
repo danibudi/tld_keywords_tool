@@ -132,7 +132,14 @@ def grid(request):
                 kw_sv.append((kw.kw, kw.sv))
             kw = [kw.kw for kw in kw_language]
             kw_domain_list = sum(kw_domain_list, [])
-            namecheap_domains, err = namecheap_domains_check(kw_domain_list)
+            try:
+                namecheap_domains, err = namecheap_domains_check(kw_domain_list)
+            except:
+                return render_to_response(
+                    'grid.html', dict(
+                        domains=None, namecheap_domains=namecheap_domains,
+                        form_lang=form_lang, exception_error='<urlopen error [Errno -2] Name or service not known>',
+                        context_instance=RequestContext(request)))
             grid_id = iter(xrange(10000))
             grid = []
             for k in kw_sv:
