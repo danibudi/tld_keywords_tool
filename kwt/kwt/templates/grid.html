@@ -67,7 +67,9 @@ function clr()
 <div id="content" style='width:80%'>
 {% block navigate %}
 {% include "navigation.html" %}
+{% if exception_error %}
 <p style='color:red'>Please, check the internet connection {{ exception_error }}</p>
+{% endif %}
 {% endblock %}
 <h1 style="color:#4E9CAF; margin-top: 2em;">
 Available domains

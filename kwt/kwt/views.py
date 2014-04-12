@@ -149,7 +149,7 @@ def grid(request):
                 'grid.html', dict(domains=domains,
                                   namecheap_domains=namecheap_domains,
                                   form_lang=form_lang,
-                                  tld_all=tld_all, kw=kw, grid=grid,
+                                  tld_all=tld_all, kw=kw, grid=sorted(grid),
                                   context_instance=RequestContext(request)))
     else:
         form_lang = LanguageForm(prefix='pfix')
