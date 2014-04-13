@@ -30,6 +30,21 @@ class KwdSvForm(Form):
         self.fields['kwd_sv'].label = "Keywords&SV"
 
 
+class TranslatedForm(Form):
+    kwd_sv_tr = forms.CharField(widget=forms.Textarea, required=False,
+                             help_text='Translated keywords and SVs.')
+    language = forms.ModelChoiceField(
+        lang_all.order_by('language'),
+        widget=forms.Select(
+            attrs={"onChange": 'click_submit()'}), required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(TranslatedForm, self).__init__(*args, **kwargs)
+        self.fields['kwd_sv_tr'].label = "Translated Keywords&SV"
+        self.fields['kwd_sv_tr'].widget.attrs = {
+            "style": "width:80%; resize: vertical; font-size: larger; line-height: 2.4em;"}
+
+
 class KeywordListForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(KeywordListForm, self).__init__(*args, **kwargs)

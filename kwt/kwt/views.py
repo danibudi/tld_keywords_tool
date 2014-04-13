@@ -2,7 +2,8 @@ from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_exempt
 from django.template.context import RequestContext
 from models import Keyword, Tld, Kw_sv_language, Language
-from forms import LanguageForm, KwdSvForm, KeywordListForm, KeywordDbForm
+from forms import (LanguageForm, KwdSvForm, KeywordListForm,
+                   KeywordDbForm, TranslatedForm)
 from namecheap_api import namecheap_domains_check, parser_data
 from django.forms.formsets import formset_factory
 
@@ -59,7 +60,8 @@ def home(request):
             #~ request.session["name"] = language.id
             kwords_untranslated = kw_sort(language=language)
             KeywordListFormSet = formset_factory(KeywordListForm, extra=0)
-            if ('lang_sub' in request.POST or 'kw_sv_sub' in request.POST) and language is not None:
+            if ('lang_sub' in request.POST or 'kw_sv_sub' in request.POST)\
+                    and language is not None:
                 x_post = [
                     dict(kw_english=kw,
                          language=language.id) for kw in kwords_untranslated]
@@ -69,9 +71,9 @@ def home(request):
                                              prefix='trans_kw')
             if 'clear_trans_kw' in request.POST:
                 if language:
-                    language=language.id
+                    language = language.id
                 else:
-                    language=None
+                    language = None
                 x_post = [dict(
                     kw_english=kw,
                     language=language) for kw in kwords_untranslated]
@@ -109,6 +111,76 @@ def home(request):
 
 
 @csrf_exempt
+def manykw(request):
+    kw_language = None
+    language = None
+    kw_sv_dict = None
+    form_errors = []
+    kwords_untranslated = []
+    new_kwds_list_errors = []
+    form_kwd_sv = KwdSvForm(prefix='kw_sv_sub')
+    form_tr_kwd_sv = TranslatedForm(prefix='tr_kw_sv_sub')
+    if request.method == 'POST':
+        form_kwd_sv = KwdSvForm(request.POST, prefix='kw_sv_sub')
+        form_tr_kwd_sv = TranslatedForm(request.POST, prefix='tr_kw_sv_sub')
+        if 'kw_sv_sub' in request.POST:
+            if form_kwd_sv.is_valid():
+                kw_sv_data = form_kwd_sv.cleaned_data['kwd_sv']
+                kw_sv_dict = parser_data(kw_sv_data)
+                for k, v in kw_sv_dict.items():
+                    try:
+                        kw, created = Keyword.objects.get_or_create(
+                            kw_english=str(k).lower())
+                        kw.sv_english = int(v)
+                        kw.save()
+                    except:
+                        pass
+        if form_kwd_sv.is_valid():
+            try:
+                language = Language.objects.get(request.session["name"])
+            except:
+                language = form_kwd_sv.cleaned_data['language']
+            else:
+                language = None
+            kwords_untranslated = kw_sort(language=language)
+            if 'tr_kw_sv_sub' in request.POST:
+                if form_tr_kwd_sv.is_valid():
+                    kw_sv_data = form_tr_kwd_sv.cleaned_data['kwd_sv_tr']
+                    kw_sv_dict = parser_data(kw_sv_data)
+                    new_kwds_list = zip([
+                        i.id for i in kwords_untranslated], kw_sv_dict.items())
+                    if not new_kwds_list:
+                        new_kwds_list_errors.append('kw & sv needed')
+                    for eng_kw_id, transl_kw in new_kwds_list:
+                        try:
+                            kw = Kw_sv_language.objects.create(
+                                kw_english=Keyword.objects.get(
+                                    id=int(eng_kw_id)),
+                                kw=str(transl_kw[0]).lower().strip(),
+                                sv=int(transl_kw[1]),
+                                language=language
+                                )
+                        except Exception as inst:
+                            # __str__ allows args to printed directly
+                            new_kwds_list_errors.append(
+                                [inst, (eng_kw_id, transl_kw)])
+                    kwords_untranslated = kw_sort(language=language)
+                else:
+                    form_tr_kwd_sv.append(form_tr_kwd_sv.errors)
+    if language is None:
+        kwords_untranslated = Keyword.objects.all()
+        form_kwd_sv = KwdSvForm(prefix='kw_sv_sub')
+    return render_to_response(
+        'manykw.html',
+        dict(language=language, kw_sv_dict=kw_sv_dict, form_errors=form_errors,
+             kw_language=kw_language, form_kwd_sv=form_kwd_sv,
+             form_tr_kwd_sv=form_tr_kwd_sv,
+             new_kwds_list_errors=new_kwds_list_errors,
+             kwords_all=kwords_untranslated),
+        context_instance=RequestContext(request))
+
+
+@csrf_exempt
 def grid(request):
     tlds = Tld.objects.all()
     t_list = [t.domain for t in tlds]
@@ -133,12 +205,15 @@ def grid(request):
             kw = [kw.kw for kw in kw_language]
             kw_domain_list = sum(kw_domain_list, [])
             try:
-                namecheap_domains, err = namecheap_domains_check(kw_domain_list)
+                namecheap_domains, err = namecheap_domains_check(
+                    kw_domain_list)
             except:
                 return render_to_response(
                     'grid.html', dict(
                         domains=None, namecheap_domains=namecheap_domains,
-                        form_lang=form_lang, exception_error='<urlopen error [Errno -2] Name or service not known>',
+                        form_lang=form_lang,
+                        exception_error="""
+                        <urlopen error [Errno-2] Name or service not known>""",
                         context_instance=RequestContext(request)))
             grid_id = iter(xrange(10000))
             grid = []

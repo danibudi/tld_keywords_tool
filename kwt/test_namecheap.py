@@ -38,9 +38,9 @@ class TestApi(unittest.TestCase):
         domains_status, err = namecheap_domains_check(
             domain_list=50*domains)
         self.assertEquals(domains_status, {'google.com': False,
-                           'availabledomain.com': False,
-                           u'раббота.com': True,
-                           u'труд.com': False, 'alabaladomain.com': True})
+                          'availabledomain.com': False,
+                          u'раббота.com': True,
+                          u'труд.com': False, 'alabaladomain.com': True})
 
     def test_get_HTTPResponce_no_domain_list(self):
         domains_status, err = namecheap_domains_check()

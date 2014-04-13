@@ -74,7 +74,7 @@ function clr()
 <h1 style="color:#4E9CAF; margin-top: 2em;">
 Available domains
 </h1>
-    <form name="form_lang" action="" method="post">{% csrf_token %}
+    <form name="form_lang" action="" method="post">
     {{ form_lang.management_form }}
     {{ form_lang.as_p }}
     <input type="submit" value="Show available Domains" />

@@ -1,0 +1,292 @@
+{% load i18n %}
+{% get_available_languages as LANGUAGES %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<?xml version="1.0" encoding="utf-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<style>
+.tkw
+{
+overflow:auto;
+background-color: #b0e0e6;
+box-shadow: 0em 0em 0.5em #97CBF4;
+vertical-align:top!important;
+width: 25em;
+}
+.title{
+    color: blue;
+    font-size:larger;
+    font-weight:bold;
+    text-align:center;
+    margin-left:5em;
+    margin-top:0.5em;
+}
+.errorlist {
+   font-size: small!important;
+}
+
+ul.errorlist {
+   font-size: small!important;
+   color: red;
+   text-align: left;
+}
+
+}
+.textarea {
+    border: none;
+    width: 100%;
+    -webkit-box-sizing: border-box; /* <=iOS4, <= Android  2.3 */
+    -moz-box-sizing: border-box; /* FF1+ */
+    box-sizing: border-box; /* Chrome, IE8, Opera, Safari 5.1*/
+}
+
+.helptext {
+    font-size: small;
+    font-style: italic;
+    color: green;
+}
+
+.flex-container {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-direction: normal;
+    -moz-box-direction: normal;
+    -webkit-box-orient: horizontal;
+    -moz-box-orient: horizontal;
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-flex-wrap: nowrap;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    -webkit-box-pack: start;
+    -moz-box-pack: start;
+    -webkit-justify-content: flex-start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+    -webkit-align-content: stretch;
+    -ms-flex-line-pack: stretch;
+    align-content: stretch;
+    -webkit-box-align: start;
+    -moz-box-align: start;
+    -webkit-align-items: flex-start;
+    -ms-flex-align: start;
+    align-items: flex-start;
+    margin-top: 1em;
+    overflow:auto;
+    max-height:40em;
+    width: 55em!important;
+}
+
+.flex-item:{
+    -webkit-box-ordinal-group: 1;
+    -moz-box-ordinal-group: 1;
+    -webkit-order: 0;
+    -ms-flex-order: 0;
+    order: 0;
+    -webkit-box-flex: 0;
+    -moz-box-flex: 0;
+    -webkit-flex: 0 1 auto;
+    -ms-flex: 0 1 auto;
+    flex: 0 1 auto;
+    -webkit-align-self: auto;
+    -ms-flex-item-align: auto;
+    align-self: auto;
+}
+
+/*
+    Legacy Firefox implementation treats all flex containers
+    as inline-block elements.
+*/
+
+@-moz-document url-prefix() {
+.flex-container {
+    width: auto;
+    -moz-box-sizing: border-box;
+    }
+}
+
+.table_data {
+    background-color:white;
+    height: 1.5em;
+}
+
+.table_header {
+    color: #666666;
+    font-weight:bold;
+    font-size:medium;
+}
+
+.headerSortDown {
+  background-image: url("http://i.imgur.com/RkA9MBo.png");
+  background-repeat:no-repeat;
+}
+.headerSortUp {
+  background-image: url("http://i.imgur.com/SP99ZPJ.png");
+  background-repeat:no-repeat;
+}
+input:focus
+{
+background-color:#FFFF99;
+}
+
+textarea:focus {
+    background: #FFFF99;
+}
+#hh :hover
+{
+color:blue;
+}
+#content > div:nth-child(1):hover
+{
+color:black!important;
+}
+</style>
+
+<script type="text/javascript" src="{{ STATIC_URL }}jquery-latest.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}jquery.tablesorter.js/"></script>
+<script>
+$(document).ready(function()
+    {
+        $("#KeywordsTable").tablesorter();
+        $("#TranslatedTable").tablesorter();
+        var inputs = $("#id_tr_kw_sv_sub-kwd_sv_tr");
+        var kw_ids = $("#kw_ids");
+        s_height = $("#KeywordsTable").css("height");
+        first_height = $("#aaa").css("height");
+        $(kw_ids).css("height",s_height);
+        //$("#id_transl_table").css("height",first_height);
+        $(inputs).css("height",s_height);
+    }
+);
+
+function clr()
+{
+    var ta = document.getElementById("id_kw_sv_sub-kwd_sv");
+    ta.value = "";
+    ta.focus();
+}
+
+function clr_textarea()
+{
+    var ta = document.getElementById("id_tr_kw_sv_sub-kwd_sv_tr");
+    ta.value = "";
+    ta.focus();
+}
+</script>
+<script>
+function get_submit_button() {
+    var inputs = document.getElementsByTagName('INPUT');
+    for(var i=0; i < inputs.length; i++) {
+        var inp = inputs[i];
+        if(inp.value == 'Set language') {
+            return inp;
+            break; // exits the loop #id_trans_kw-0-kw
+        }
+    }
+    return false;
+}
+
+function click_submit() {
+    var inp = get_submit_button();
+    if(inp) inp.click();
+}
+</script>
+
+<title>
+Keywords
+</title>
+</head>
+
+<body style="background-image:url('/static/bground-pattern.jpg');">
+<div id='hh'> {% block navigate %}
+{% include "navigation.html" %}
+{% endblock %}<br/></div>
+<form action="" name="kw_sv_sub" method="post">{% csrf_token %}
+<div class="flex-container" id="content">
+    <div class="flex-item">
+        <div class="tkw"><span class="title" style="margin-bottom: 2em;">English Keywords</span>
+        <table id="KeywordsTable" class="tablesorter" style="width:24.8em; vertical-align:top!important; margin-top: 1.1em;">
+            <thead>
+            <tr id="aaa">
+            <th class="table_header" style="width:10%;">ID</a></th>
+            <th class="table_header" style="width:auto">Keywords</th>
+            <th class="table_header" style="width:50%;">SV</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for kw in kwords_all %}
+                <tr style="height:2em!important;" width=100%>
+                    <td class="table_data" style="width:10%;">{{ kw.id }}</td>
+                    <td class="table_data" style="width:78%;">{{ kw.kw_english.lower }}</td>
+                    <td class="table_data" style="width:auto;">{{ kw.sv_english }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    </div>
+    <div class="flex-item" style="margin-left: 4em; ">
+        <div class="tkw" name="lang_sub" id="kwordslist">
+            <input type="submit" name="lang_sub" value="Set language" style="display: none;"/>
+                    {% if form_errors %}
+                        {% if not language or not form_kwd_sv.language %}
+                            <p style="color: #F00;">Please select a language.</p>
+                        {% else %}
+                            {% for i in form_errors %}
+                            {{ i }}
+                            {% endfor %}
+                        {% endif %}
+                    {% endif %}
+            <div>
+                {{ form_tr_kwd_sv.management_form }}
+                <div class="title" style="margin-left:0em!important;">Translated Keywords & SVs in {{ form_kwd_sv.language }}</div>
+                    {% if not language or not form_kwd_sv.language %}
+                        <p style="color: #F00;">Please select a language.</p>
+                    {% endif %}
+                    {% if new_kwds_list_errors %}
+                        <p style="color: red; font-size: small; text-align: left;">
+                        Please correct the error below.</p>
+                         {% for i in new_kwds_list_errors %}
+                            <li style="font-size: small!important; color: red; text-align: left;">{{ i }} </li>
+                            {% endfor %}
+                    {% endif %}
+                    <p style="margin-bottom: 0em; color: #666; font-weight: bold; font-size: medium;">ID <span style="margin-left: 2em"> KW <span style="margin-left: 10em">SV</span></p>
+                <div id="kw_ids" style="float:left; width:2em!important; margin-top: -0.6em;">
+                        {% for kw in kwords_all %}
+                        <p id="id_transl_table" style="height:1.13em!important;">
+                            {{ kw.id }}
+                        </p>
+                        {% endfor %}
+                </div>
+                <span>
+                {{ form_tr_kwd_sv.kwd_sv_tr }}
+                </span>
+                <p class="helptext">Add {{ language }} KW&SV.</p>
+                <p><input type="submit" name="tr_kw_sv_sub" value="Add tr kw-sv" />
+                    <input type="submit" name="tr_kw_sv_clean" value="Clean" onclick="clr_textarea()" />
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="tkw">
+{{ form_kwd_sv.management_form }}
+<div class="title" style="margin-left:0em!important;">Keywords & SVs in English
+{% if form_kwd_sv.errors %}
+    <p style="color: red; font-size: small; text-align: left;">
+    Please correct the error below.</p>
+    <p style="font-size: small!important; color: red; text-align: left;">{{ form_kwd_sv.errors }}</p>
+{% endif %}
+{{ form_kwd_sv.kwd_sv }}
+</div>
+<p><input type="submit" name="kw_sv_sub" value="Add copied kw-sv" />
+    <input type="submit" name="kw_sv_clean" value="Clean" onclick="clr()" /></p>
+</form>
+</body>
+</html>
