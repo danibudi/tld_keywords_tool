@@ -1,5 +1,5 @@
 from django.forms import ModelForm, Form
-from models import Tld, Kw_sv_language, Language
+from models import Tld, Kw_sv_language, Language, validate_kw, validate_sv
 from django import forms
 
 
@@ -13,7 +13,7 @@ OPTIONS = tuple([(t.id, t.domain) for t in tlds])
 
 class LanguageForm(Form):
     language = forms.ModelChoiceField(lang_all, required=True)
-    tld_list = forms.CharField(max_length=None, required=True, label='TLD',
+    tld_list = forms.CharField(max_length=80, required=True, label='TLD',
                                initial=t_list, help_text='80 characters max.')
 
 
@@ -32,7 +32,7 @@ class KwdSvForm(Form):
 
 class TranslatedForm(Form):
     kwd_sv_tr = forms.CharField(widget=forms.Textarea, required=False,
-                             help_text='Translated keywords and SVs.')
+                                help_text='Translated keywords and SVs.')
     language = forms.ModelChoiceField(
         lang_all.order_by('language'),
         widget=forms.Select(
@@ -71,15 +71,19 @@ class KeywordListForm(ModelForm):
 
 class KeywordDbForm(Form):
     kw = forms.CharField(widget=forms.TextInput(
-        attrs={'class': 'disabled', 'readonly': 'readonly'}))
+        attrs={'class': 'disabled', 'readonly': 'readonly'}),
+        validators=[validate_kw])
     sv = forms.DecimalField(widget=forms.TextInput(
-        attrs={'class': 'disabled', 'readonly': 'readonly'}))
+        attrs={'class': 'disabled', 'readonly': 'readonly'}),
+        validators=[validate_sv])
     language = forms.CharField(widget=forms.TextInput(
         attrs={'class': 'disabled', 'readonly': 'readonly'}))
     kw_translated = forms.CharField(widget=forms.TextInput(
-        attrs={'class': 'disabled', 'readonly': 'readonly'}))
+        attrs={'class': 'disabled', 'readonly': 'readonly'}),
+        validators=[validate_kw])
     sv_translated = forms.DecimalField(widget=forms.TextInput(
-        attrs={'class': 'disabled', 'readonly': 'readonly'}))
+        attrs={'class': 'disabled', 'readonly': 'readonly'}),
+        validators=[validate_sv])
 
 
 class KeywordTldForm(Form):

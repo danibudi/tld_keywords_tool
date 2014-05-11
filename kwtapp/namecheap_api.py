@@ -5,7 +5,6 @@ import xml.etree.ElementTree as ET
 
 from settings import (api_key, api_user, command, user_name, clientIp, url,
                       amount_of_domains_checked_in_one_API_call,
-                      #~ length_of_URL_limited_to
                       )
 
 
@@ -20,14 +19,32 @@ def parser_data(text=""):
                 kw_sv = l.split(' ')
             if '' in kw_sv:
                 kw_sv.remove('')
-        except:
+        except Exception:
             kw_sv = l.split(' ')
         if kw_sv != ['']:
             try:
                 kw_sv_dict[kw_sv[0]] = kw_sv[1]
-            except:
+            except Exception:
                 pass
     return kw_sv_dict
+
+
+def parser_data_to_list(text=""):
+    kw_sv_list = []
+    for line in text.split('\n'):
+        l = line.strip()
+        try:
+            if '\t' in l:
+                kw_sv = l.split('\t')
+            else:
+                kw_sv = l.split(' ')
+            if '' in kw_sv:
+                kw_sv.remove('')
+        except Exception:
+            kw_sv = l.split(' ')
+        if kw_sv != [''] and len(kw_sv)==2:
+            kw_sv_list.append((kw_sv[0], kw_sv[1]))
+    return kw_sv_list
 
 
 def namecheap_domains_check(domain_list=[]):
@@ -48,7 +65,7 @@ def namecheap_domains_check(domain_list=[]):
     data['ClientIp'] = clientIp
     try:
         domainList = [dom.encode('idna') for dom in domain_list]
-    except:
+    except Exception:
         err = UnicodeError("label empty or too long")
         return domains_status, err
     max_amount_domains = amount_of_domains_checked_in_one_API_call
@@ -62,16 +79,14 @@ def namecheap_domains_check(domain_list=[]):
         the_page = data_url.read()
         root = ET.fromstring(the_page)
         if root.iter('Errors'):
-            for e in root.iter(
-                '{http://api.namecheap.com/xml.response}Error'):
+            for e in root.iter('{http://api.namecheap.com/xml.response}Error'):
                 try:
-                    err = err + e.text + '; '  # .split("Provider for tld '")[1][:3].strip("'")
-                except:
+                    err = err + e.text + '; '
+                except Exception:
                     err_c = e.text
                     if (domains_status != {}) and err_c == 'Parameter DomainList is Missing':
                         err = err + err_c + '; '
-        for domain in root.iter(
-            '{http://api.namecheap.com/xml.response}DomainCheckResult'):
+        for domain in root.iter('{http://api.namecheap.com/xml.response}DomainCheckResult'):
             b = (domain.attrib['Available'] == 'true')
             domains_status[unicode(domain.attrib['Domain'], 'idna')] = b
     return (domains_status, err)

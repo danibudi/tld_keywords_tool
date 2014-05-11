@@ -29,7 +29,7 @@ class TestApi(unittest.TestCase):
         self.assertEquals(domains_status, {})
         self.assertRaises(expected_error)
 
-    def test_get_HTTPResponce_over_NC_limit2048_1name(self):
+    def test_get_HTTPResponce_over_NC_limit2048_name(self):
         domains_status, err = namecheap_domains_check(
             domain_list=500*['conzap.com'])
         self.assertEquals(domains_status, {u'conzap.com': False})
