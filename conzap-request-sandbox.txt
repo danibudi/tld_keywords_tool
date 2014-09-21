@@ -1,1 +1,0 @@
-https://api.sandbox.namecheap.com/xml.response?ApiUser=dbudinova&ApiKey=b382deae02c64b8892bf305c1b05d312&UserName=dbudinova&Command=namecheap.domains.check&ClientIp=82.137.66.123&DomainList=vintech.com,availabledomain.com,google.com
